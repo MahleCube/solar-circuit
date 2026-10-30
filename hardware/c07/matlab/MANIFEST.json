@@ -87,8 +87,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 1794,
-      "sha256": "8edbcf4bbb18198bba93d4c24f844a6630980c37b00393b28a730cefce3d6fca"
+      "bytes": 1692,
+      "sha256": "bbc6625c08f685c66d28228568ce0f039c2dd5b9ed17834c20d20855d6b9bfc5"
     }
   ],
   "static_drawing_comparison_pass": true,
