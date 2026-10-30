@@ -1,0 +1,146 @@
+component LTC4364Preview
+% LTC4364 Preview
+% LTC4364-1 FUNCTIONAL PREVIEW - not an ADI transistor or SPICE model.
+% External Figure 10 terminals are preserved. Typical thresholds and limited
+% gate currents illustrate startup, ideal-diode action, current limiting,
+% timer latchoff and SHDN. Propagation delays, compensation, recovery,
+% exact UV/OV state sequencing, SOA and charge-pump power are not qualified.
+nodes
+ HGATE=foundation.electrical.electrical;
+ SOURCE=foundation.electrical.electrical;
+ DGATE=foundation.electrical.electrical;
+ SENSE=foundation.electrical.electrical;
+ OUT=foundation.electrical.electrical;
+ VCC=foundation.electrical.electrical;
+ SHDN=foundation.electrical.electrical;
+ UV=foundation.electrical.electrical;
+ OV=foundation.electrical.electrical;
+ FB=foundation.electrical.electrical;
+ TMR=foundation.electrical.electrical;
+ GND=foundation.electrical.electrical;
+ FLT=foundation.electrical.electrical;
+ ENOUT=foundation.electrical.electrical;
+end
+parameters
+ Vgate={12,'V'};
+ Vref={1.25,'V'};
+ VsenseLimit={0.05,'V'};
+ VdiodeReg={0.03,'V'};
+end
+variables
+ ih={0,'A'}; iDG={0,'A'}; ivcc={0,'A'}; ishdn={0,'A'};
+ iuv={0,'A'}; iov={0,'A'}; ifb={0,'A'}; itmr={0,'A'};
+ isense={0,'A'}; iout={0,'A'}; iflt={0,'A'}; ien={0,'A'};
+end
+variables(Event=true)
+ latched=0;
+ armed=0;
+ uvReady=0;
+end
+branches
+ ih:HGATE.i->SOURCE.i;
+ iDG:DGATE.i->SOURCE.i;
+ ivcc:VCC.i->GND.i;
+ ishdn:SHDN.i->GND.i;
+ iuv:UV.i->GND.i;
+ iov:OV.i->GND.i;
+ ifb:FB.i->GND.i;
+ itmr:TMR.i->GND.i;
+ isense:SENSE.i->GND.i;
+ iout:OUT.i->GND.i;
+ iflt:FLT.i->GND.i;
+ ien:ENOUT.i->GND.i;
+end
+intermediates
+ vcc=VCC.v-GND.v;
+ vshdn=SHDN.v-GND.v;
+ vuv=UV.v-GND.v;
+ vov=OV.v-GND.v;
+ vfb=FB.v-GND.v;
+ vtmr=TMR.v-GND.v;
+ vout=OUT.v-GND.v;
+ vsense=SENSE.v-OUT.v;
+ vdiode=SOURCE.v-SENSE.v;
+ vgh=HGATE.v-SOURCE.v;
+ vgd=DGATE.v-SOURCE.v;
+ enabled=vcc>{4,'V'} && vshdn>{1.6,'V'} && uvReady>0.5;
+ running=enabled && armed>0.5 && latched<0.5;
+ currentThreshold=if vout<{1.5,'V'}, {0.025,'V'} else VsenseLimit end;
+ overcurrent=vsense>currentThreshold*0.99;
+ overvoltage=vfb>Vref*0.999;
+ dv=max(vcc-vout,{0,'V'});
+ hgDemand=min(min({20e-6,'A'},(currentThreshold-vsense)/{10,'Ohm'}),(Vref-vfb)/{100,'Ohm'});
+ dgDemand=min({10e-6,'A'},(vdiode-VdiodeReg)/{100,'Ohm'});
+end
+events
+ when initialevent
+  uvReady=double(vuv>Vref+{0.025,'V'});
+ elsewhen edge(vuv>Vref+{0.025,'V'})
+  uvReady=1;
+ elsewhen edge(vuv<Vref)
+  uvReady=0;
+ end
+ when initialevent
+  latched=0;
+ elsewhen edge(vshdn<{0.5,'V'})
+  latched=0;
+ elsewhen edge(vtmr>{1.35,'V'} && enabled)
+  latched=1;
+ end
+ when initialevent
+  armed=double(enabled && vov<Vref);
+ elsewhen edge(~enabled)
+  armed=0;
+ elsewhen edge(enabled && vov<Vref)
+  armed=1;
+ end
+end
+equations
+ if running
+  ih==-max({-0.13,'A'},min(hgDemand,{0,'A'}))-max(hgDemand,{0,'A'})*min(max((Vgate-vgh)/{0.1,'V'},0),1) ...
+      +max(vgh-Vgate,{0,'V'})/{10,'Ohm'}-max(-vgh,{0,'V'})/{10,'Ohm'};
+  iDG==-max({-0.13,'A'},min(dgDemand,{0,'A'}))-max(dgDemand,{0,'A'})*min(max((Vgate-vgd)/{0.1,'V'},0),1) ...
+      +max(vgd-Vgate,{0,'V'})/{10,'Ohm'}-max(-vgd,{0,'V'})/{10,'Ohm'};
+ else
+  ih==min(max(vgh/{10,'Ohm'},{-1e-3,'A'}),{1e-3,'A'});
+  iDG==min(max(vgd/{10,'Ohm'},{-1e-3,'A'}),{1e-3,'A'});
+ end
+ if running && overcurrent
+  itmr==-min({260e-6,'A'},{10e-6,'A'}+dv*{3.33e-6,'A/V'});
+ elseif running && overvoltage
+  itmr==-min({50e-6,'A'},{2.2e-6,'A'}+dv*{0.64e-6,'A/V'});
+ elseif vshdn<{0.5,'V'}
+  itmr==min(max(vtmr/{100,'Ohm'},{-1e-3,'A'}),{1e-3,'A'});
+ else
+  itmr==min(max(vtmr/{1e4,'Ohm'},{-2e-6,'A'}),{2e-6,'A'});
+ end
+ ivcc=={370e-6,'A'}*tanh(vcc/{1,'V'});
+ ishdn==(vshdn-{4,'V'})/{4e6,'Ohm'};
+ iuv==(UV.v-GND.v)/{1e12,'Ohm'};
+ iov==(OV.v-GND.v)/{1e12,'Ohm'};
+ ifb==(FB.v-GND.v)/{1e12,'Ohm'};
+ isense==(SENSE.v-GND.v)/{1e12,'Ohm'};
+ iout==(OUT.v-GND.v)/{1e12,'Ohm'};
+ if latched>0.5 || vtmr>Vref
+  iflt==(FLT.v-GND.v)/{50,'Ohm'};
+ else
+  iflt==(FLT.v-GND.v)/{1e12,'Ohm'};
+ end
+ % Corrected ENOUT polarity relative to supplied preview.
+ % The physical part LATCHES high impedance until OUT falls below 2.2 V.
+ % That latch and loss of sink authority below OUT=1 V remain unmodeled.
+ % ENOUT is intentionally unused in the integrated physical circuit.
+ if running && vcc-vout<{0.7,'V'}
+  ien==(ENOUT.v-GND.v)/{1e12,'Ohm'};
+ else
+  ien==(ENOUT.v-GND.v)/{50,'Ohm'};
+ end
+end
+annotations
+ Icon='ltc4364_icon.svg';
+ [HGATE,SOURCE,DGATE,SENSE,OUT]:Side=top;
+ [VCC,SHDN,UV,OV]:Side=left;
+ [FB,ENOUT,FLT]:Side=right;
+ [GND,TMR]:Side=bottom;
+end
+end

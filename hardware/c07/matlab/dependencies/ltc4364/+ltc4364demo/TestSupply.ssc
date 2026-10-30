@@ -1,0 +1,27 @@
+component TestSupply
+% Test Supply
+% Test fixture only: a finite-resistance 48 V supply with a 5 ms ramp.
+% Not a PV panel model and not a component in ADI Figure 10.
+nodes
+ p=foundation.electrical.electrical;
+ n=foundation.electrical.electrical;
+end
+parameters
+ V={48,'V'};
+ Rise={5e-3,'s'};
+ R={0.05,'Ohm'};
+end
+variables
+ i={0,'A'};
+end
+branches
+ i:p.i->n.i;
+end
+equations
+ p.v-n.v==V*min(time/Rise,1)+i*R;
+end
+annotations
+ p:Side=left;
+ n:Side=right;
+end
+end

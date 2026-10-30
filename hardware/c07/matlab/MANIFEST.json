@@ -1,0 +1,96 @@
+{
+  "edition": "c07-clean-20261031-r01",
+  "purpose": "回路図の閲覧・編集用。動作シミュレーション用モデルとは別。",
+  "matlab_release": "R2026b",
+  "products": [
+    "MATLAB",
+    "Simulink",
+    "Simscape",
+    "Simscape Electrical",
+    "Simscape Battery"
+  ],
+  "custom_libraries": [
+    {
+      "name": "ltc4364demo_lib",
+      "folder": "dependencies/ltc4364"
+    },
+    {
+      "name": "solarprotect_lib",
+      "folder": "dependencies/solarprotect"
+    }
+  ],
+  "files": [
+    {
+      "path": "c07_circuit.svg",
+      "bytes": 1608638,
+      "sha256": "f4040bb4a9a275e31ca6d4c42f0ad7eaa9f879b4dfd6db766a8385588ed3757f"
+    },
+    {
+      "path": "c07_preview.png",
+      "bytes": 350391,
+      "sha256": "1044aae15ed05f97262b279b8df4d9fbe913009098173de8522547d34d6b8634"
+    },
+    {
+      "path": "dependencies/ltc4364/+ltc4364demo/ltc4364_icon.svg",
+      "bytes": 552,
+      "sha256": "605eb3a074a858508d286dba1cebba24bcf6ceaf28ce49f38065f5dfe90b59c3"
+    },
+    {
+      "path": "dependencies/ltc4364/+ltc4364demo/LTC4364Preview.ssc",
+      "bytes": 4169,
+      "sha256": "1e0b1c4698692fc3c5d19f2b637d000cf38cf4bae6dab7571794e801d6b03f1a"
+    },
+    {
+      "path": "dependencies/ltc4364/+ltc4364demo/TestSupply.ssc",
+      "bytes": 463,
+      "sha256": "1caffea921c7ccdedc662d0e1964b29f4756c0ca1cb229227a64bb2e7b0d10a5"
+    },
+    {
+      "path": "dependencies/ltc4364/+ltc4364demo/zener_icon.svg",
+      "bytes": 233,
+      "sha256": "216f2d2cde2b12253466470e468d2600e6ed52d79fd08df0043e0a2b09aa2029"
+    },
+    {
+      "path": "dependencies/ltc4364/+ltc4364demo/ZenerPreview.ssc",
+      "bytes": 503,
+      "sha256": "c9d3bf2c77271612ad47fa364433d82dfb035c1d79f84c347f75b5f6bcacb876"
+    },
+    {
+      "path": "dependencies/ltc4364/ltc4364demo_lib.slx",
+      "bytes": 19508,
+      "sha256": "2698387a7e23c1fd9753d475a145df85307e7e8c2c5b4401506643b00825e9de"
+    },
+    {
+      "path": "dependencies/solarprotect/+solarprotect/ltc4364_icon.svg",
+      "bytes": 552,
+      "sha256": "605eb3a074a858508d286dba1cebba24bcf6ceaf28ce49f38065f5dfe90b59c3"
+    },
+    {
+      "path": "dependencies/solarprotect/+solarprotect/LTC4364Preview.ssc",
+      "bytes": 4588,
+      "sha256": "9494997a940c7b0a68048da4afe3505922b9f70ed71e024ae1811034cbf78deb"
+    },
+    {
+      "path": "dependencies/solarprotect/solarprotect_lib.slx",
+      "bytes": 14397,
+      "sha256": "c13f3aac26898a1b76b9f19191b02caf02753228c259f1ba4915df85e9126815"
+    },
+    {
+      "path": "models/solar_pv_protected_c07_circuit.slx",
+      "bytes": 4891632,
+      "sha256": "0468c99704de748a7b90ba53635e8c913b7b239786b59a02f645a6fce955f997"
+    },
+    {
+      "path": "OPEN_C07.m",
+      "bytes": 1915,
+      "sha256": "c48d4ab0a8c26e1c5c97d66adfb7133e293dd2eea675450495acb6e85a13c8ef"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1794,
+      "sha256": "8edbcf4bbb18198bba93d4c24f844a6630980c37b00393b28a730cefce3d6fca"
+    }
+  ],
+  "static_drawing_comparison_pass": true,
+  "simulation_executed": false
+}

@@ -11,3 +11,4 @@ RP2040とCによる制御を想定した、太陽光充電システムの設計�
 - [KiCad回路図データ](hardware/c07/project/)
 - [KiCad PCBデータ（未完成）](hardware/c07/pcb-wip/)
 - [r04 制御コード（C）](firmware/r04/)
+- [MATLAB回路図データ（エリア枠・長文説明なし）](hardware/c07/matlab/)

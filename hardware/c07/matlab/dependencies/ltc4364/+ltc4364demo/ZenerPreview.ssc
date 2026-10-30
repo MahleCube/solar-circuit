@@ -1,0 +1,29 @@
+component ZenerPreview
+% Zener Preview
+% Piecewise-linear Zener for topology preview. No temperature or pulse SOA.
+nodes
+ A=foundation.electrical.electrical;
+ K=foundation.electrical.electrical;
+end
+parameters
+ Vz={15,'V'};
+ Rz={5,'Ohm'};
+ Vf={0.7,'V'};
+ Rf={1,'Ohm'};
+end
+variables
+ i={0,'A'};
+end
+branches
+ i:A.i->K.i;
+end
+equations
+ i==max(A.v-K.v-Vf,{0,'V'})/Rf ...
+    -max(K.v-A.v-Vz,{0,'V'})/Rz+(A.v-K.v)/{1e10,'Ohm'};
+end
+annotations
+ Icon='zener_icon.svg';
+ A:Side=left;
+ K:Side=right;
+end
+end
