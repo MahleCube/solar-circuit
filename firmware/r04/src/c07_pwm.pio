@@ -1,0 +1,30 @@
+; Same finite high-side-only packet layout as the inspected c07 MicroPython PIO.
+; count:6, high-minus-2:12, low-minus-8:14; GP7 is always LOW.
+.program c07_pwm
+.wrap_target
+    pull block
+    mov isr, osr
+    out y, 6
+cycle:
+    mov osr, isr
+    out null, 6
+    out x, 12
+    jmp pin fault
+    set pins, 1
+high:
+    jmp x-- high
+    set pins, 0
+    out x, 14
+low:
+    jmp x-- low
+    jmp y-- cycle
+    mov isr, null
+    push noblock
+.wrap
+fault:
+    set pins, 0
+    set x, 1
+    mov isr, x
+    push noblock
+halt:
+    jmp halt
