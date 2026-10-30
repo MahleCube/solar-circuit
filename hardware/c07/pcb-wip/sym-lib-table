@@ -1,0 +1,8 @@
+(sym_lib_table
+  (version 7)
+
+  (lib (name "ReducedR02") (type "KiCad") (uri "${KIPRJMOD}/libraries/ReducedR02.kicad_sym") (options "") (descr ""))
+  (lib (name "Claude_R03") (type "KiCad") (uri "${KIPRJMOD}/libraries/Claude_R03.kicad_sym") (options "") (descr ""))
+  (lib (name "C07") (type "KiCad") (uri "${KIPRJMOD}/libraries/C07.kicad_sym") (options "") (descr ""))
+  (lib (name "ReviewFixed") (type "KiCad") (uri "${KIPRJMOD}/libraries/ReviewFixed.kicad_sym") (options "") (descr ""))
+  (lib (name "Readable") (type "KiCad") (uri "${KIPRJMOD}/libraries/Readable.kicad_sym") (options "") (descr "")))

@@ -1,0 +1,7 @@
+(fp_lib_table
+  (version 7)
+
+  (lib (name "C07_Planning") (type "KiCad") (uri "${KIPRJMOD}/libraries/C07_Planning.pretty") (options "") (descr ""))
+  (lib (name "Claude_R03R2") (type "KiCad") (uri "${KIPRJMOD}/libraries/Claude_R03R2.pretty") (options "") (descr ""))
+  (lib (name "Reduced_Codex") (type "KiCad") (uri "${KIPRJMOD}/libraries/Reduced_Codex.pretty") (options "") (descr ""))
+  (lib (name "L1_Assembly") (type "KiCad") (uri "${KIPRJMOD}/libraries/L1_Assembly.pretty") (options "") (descr "")))
