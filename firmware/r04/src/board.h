@@ -2,12 +2,14 @@
 #define C07_BOARD_H
 #include "startup.h"
 #include "rearm.h"
-#include "hardware/pio.h"
+#include "pwm_engine.h"
+#include "commutation.h"
 
 typedef struct {
-    PIO pio;
-    unsigned sm, offset;
-    pio_sm_config pwm_config;
+    c07_pwm_engine pwm;
+    c07_gate_plan last_plan;
+    c07_commutation commutation;
+    const char *configuration_error; /* immutable profile checked at init */
     bool initialized, pwm_enabled, bias_enabled, pv_enabled, battery_enabled;
     c07_rearm rearm;
     uint64_t completed_frames, pwm_accepted, pwm_rejected;

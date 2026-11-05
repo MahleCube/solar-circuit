@@ -10,10 +10,13 @@ enum { C07_PWM_H=6, C07_PWM_L=7, C07_BIAS_EN=8, C07_BIAS_PG=9,
 #define C07_CPU_HZ 125000000u
 #define C07_PWM_HZ 50000u
 #define C07_PWM_TICKS 2500u
-#define C07_BURST_CYCLES 50u
-/* 50 PWM periods plus 5 PIO packet instructions = 1000.040 us at 125 MHz.
- * Round up the scheduler interval so equal-period packets cannot accumulate. */
-#define C07_LOOP_US 1001u
+#define C07_BURST_CYCLES 30u
+/* Finite 600 us packet. 501 us failed the compiled complete ISR budget. */
+#define C07_LOOP_US 601u
+#define C07_PIO_LEASE_US 700u
+#define C07_PIO_DEAD_HL_TICKS 128u
+#define C07_PIO_DEAD_LH_TICKS 131u
+#define C07_PLAN_BUDGET_US 100u
 #define C07_MAX_LOOP_GAP_US 5000u
 #define C07_MAX_SAMPLE_AGE_US 2000u
 #define C07_SPI_HZ 1000000u
@@ -32,8 +35,8 @@ enum { C07_PWM_H=6, C07_PWM_L=7, C07_BIAS_EN=8, C07_BIAS_PG=9,
 /* 15 A is an operating current target, not a single-sample fault boundary.
  * Do not invent a replacement peak-current trip from a thermal nameplate.
  * ADC rail validation and the independent PV/BAT hardware fault inputs remain.
- * Neither the 15 A target nor those remote shunts guarantee an L1 peak bound.
- */
+ * R2 actually measures L1 upstream of Cout; this is still a filtered sampled
+ * measurement, not an independent cycle-by-cycle comparator. */
 #define C07_REVERSE_TRIP_A (-0.5)
 #define C07_VIN_TRIP_V 105.0
 #define C07_VPV_TRIP_V 105.0
@@ -55,10 +58,13 @@ enum { C07_PWM_H=6, C07_PWM_L=7, C07_BIAS_EN=8, C07_BIAS_PG=9,
 #define C07_CONNECT_STABLE_US 20000u
 #define C07_CONNECT_TIMEOUT_US 500000u
 #define C07_CONNECT_DELTA_V 0.3
-#define C07_CONNECT_OFFSET_V 0.1
+#define C07_CONNECT_OFFSET_V 0.15
+#define C07_RAMP_VOLTAGE_ERROR_V 0.03
 #define C07_RUN_DELTA_V 1.0
 #define C07_RAMP_CURRENT_A 0.5
 #define C07_STOP_CURRENT_A 0.3
 #define C07_STOP_STABLE_US 10000u
 #define C07_STOP_TIMEOUT_US 100000u
+#define C07_INPUT_RETRY_US 1000000u
+#define C07_INPUT_RESTART_MARGIN_V 2.0
 #endif

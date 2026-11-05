@@ -16,13 +16,13 @@ typedef struct {
 typedef struct { bool run, reset_fault; } c07_request;
 typedef struct {
     uint64_t sample_us;
-    bool bias_enable, pv_enable, battery_enable, pv_rearm;
+    bool bias_enable, pv_enable, battery_enable, pv_rearm, synchronous_allowed;
     c07_real_t duty;
 } c07_command;
 
 typedef enum { C07_IDLE, C07_CLEAR, C07_PV_CONNECT, C07_BIAS,
     C07_RAMP_OUTPUT, C07_CONNECT_BATTERY, C07_CHARGING, C07_STOPPING,
-    C07_FAULT } c07_state;
+    C07_FAULT, C07_WAIT_INPUT } c07_state;
 
 typedef struct {
     c07_state state;
@@ -37,6 +37,7 @@ typedef struct {
 
 int c07_charger_init(c07_charger *, const c07_config *);
 void c07_charger_trip(c07_charger *, const char *, uint64_t);
+void c07_charger_wait_input(c07_charger *, uint64_t);
 const c07_command *c07_charger_step(c07_charger *, const c07_inputs *,
                                     const c07_request *, uint64_t);
 const char *c07_state_name(c07_state);

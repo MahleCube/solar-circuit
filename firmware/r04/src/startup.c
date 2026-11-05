@@ -1,10 +1,11 @@
 #include "startup.h"
 #include "board_config.h"
+#include "commissioning.h"
 #include <math.h>
 #include <string.h>
 
 static void clear_command(c07_command *c) {
-    c->bias_enable=c->pv_enable=c->battery_enable=c->pv_rearm=false;
+    c->bias_enable=c->pv_enable=c->battery_enable=c->pv_rearm=c->synchronous_allowed=false;
     c->duty=0;
 }
 static void enter(c07_charger *c, c07_state state, uint64_t now) {
@@ -16,6 +17,19 @@ static bool stable(c07_charger *c, bool condition, uint64_t now, uint32_t durati
     if (!c->stable_valid) { c->stable_valid=true; c->stable_since_us=now; }
     return now-c->stable_since_us>=duration;
 }
+static bool connection_window(const c07_sample *s){
+    double e=c07_commissioning.commutation.qualified
+        ?c07_commissioning.commutation.vout_error_v+c07_commissioning.commutation.battery_voltage_error_v:0;
+    double d=s->vout-s->vbat;
+    return d-e>=0&&d+e<=C07_CONNECT_DELTA_V;
+}
+static bool connected_voltage_stable(const c07_sample *s){
+    double e=c07_commissioning.commutation.qualified
+        ?c07_commissioning.commutation.vout_error_v+c07_commissioning.commutation.battery_voltage_error_v:0;
+    /* Once connected, the battery normally clamps Cout close to Vbat. The
+     * pre-connection positive difference is no longer a required condition. */
+    return fabs(s->vout-s->vbat)+e<=C07_CONNECT_DELTA_V;
+}
 int c07_charger_init(c07_charger *c, const c07_config *config) {
     if (!c || !config) return -1;
     memset(c,0,sizeof(*c)); c->state=C07_IDLE; c->fault="";
@@ -24,6 +38,10 @@ int c07_charger_init(c07_charger *c, const c07_config *config) {
 void c07_charger_trip(c07_charger *c, const char *reason, uint64_t now) {
     if (c->state!=C07_FAULT) { c->fault=reason; enter(c,C07_FAULT,now); }
     clear_command(&c->command); c07_reset(&c->regulator);
+}
+void c07_charger_wait_input(c07_charger *c,uint64_t now){
+    if(c->state==C07_FAULT)return;
+    enter(c,C07_WAIT_INPUT,now);clear_command(&c->command);c07_reset(&c->regulator);
 }
 const char *c07_measurement_fault(const c07_inputs *i) {
     const c07_sample *s=&i->sample;
@@ -36,9 +54,14 @@ const char *c07_measurement_fault(const c07_inputs *i) {
     if (!(s->vpv>=0 && s->vpv<C07_VPV_TRIP_V)) return "VPV_RANGE";
     /* Upper operating targets belong to regulation. A sample above 15 A
      * alone is not a latched fault. board.c rejects ADC rails; hardware fault
-     * inputs below remain independent. Reverse-flow policy is unchanged. */
+     * inputs below remain independent. Qualified signed-current limits are
+     * operating-envelope checks, not cycle-by-cycle current protection. */
     if (!(s->ipv>C07_REVERSE_TRIP_A)) return "IPV_RANGE";
-    if (!(s->il>C07_REVERSE_TRIP_A)) return "IL_RANGE";
+    double il_min=c07_commissioning.commutation.qualified
+        ?c07_commissioning.commutation.minimum_current_a:C07_REVERSE_TRIP_A;
+    if (!(s->il>il_min)) return "IL_RANGE";
+    if(c07_commissioning.commutation.qualified&&s->il>=c07_commissioning.commutation.maximum_current_a)
+        return "IL_RANGE";
     if (!(s->vout>=0 && s->vout<C07_VOUT_TRIP_V)) return "VOUT_RANGE";
     if (!(s->vbat>=C07_VBAT_MIN_V && s->vbat<C07_VBAT_TRIP_V)) return "VBAT_RANGE";
     if (!(s->tbat>=C07_TBAT_MIN_C && s->tbat<C07_TBAT_MAX_C)) return "TBAT_RANGE";
@@ -59,11 +82,21 @@ const c07_command *c07_charger_step(c07_charger *c, const c07_inputs *i,
     if (clock_bad || dt==0 || dt>C07_MAX_LOOP_GAP_US) reason="LOOP_DEADLINE";
     if (!reason&&i->battery_fault) reason="BATTERY_FAULT";
     if (!reason&&i->pv_fault) reason="PV_OVERCURRENT";
+    if(!reason&&c->state>=C07_RAMP_OUTPUT&&c->state<=C07_CHARGING&&!i->bias_good)
+        reason="BIAS_LOST";
+    if(!reason&&c->state>=C07_BIAS&&c->state<=C07_CHARGING&&i->pv_stopped)
+        reason="PV_STOPPED";
+    /* Input collapse is different from a normal current-decay stop: keeping
+     * BAT_EN on can feed a reverse path through L1 and Q1's body diode. */
     if (c->state==C07_FAULT) {
         if (reset_edge&&!r->run&&!reason&&i->pv_stopped) { c->fault=""; enter(c,C07_IDLE,now); }
         return o;
     }
     if (reason) { c07_charger_trip(c,reason,now); return o; }
+    if(c->state>=C07_RAMP_OUTPUT&&c->state<=C07_STOPPING
+       &&s->vin<=s->vout+C07_HEADROOM_V){
+        c07_charger_wait_input(c,now);return o;
+    }
     if (!r->run && c->state!=C07_IDLE && c->state!=C07_STOPPING) {
         if (c->state==C07_RAMP_OUTPUT||c->state==C07_CONNECT_BATTERY||c->state==C07_CHARGING) {
             c->stop_battery_enabled=c->state==C07_CONNECT_BATTERY||c->state==C07_CHARGING;
@@ -96,14 +129,14 @@ const c07_command *c07_charger_step(c07_charger *c, const c07_inputs *i,
         } else if (elapsed>=C07_BIAS_TIMEOUT_US) c07_charger_trip(c,"BIAS_TIMEOUT",now);
         break;
     case C07_RAMP_OUTPUT:
-        if (stable(c,s->vout-s->vbat>=0 && s->vout-s->vbat<=C07_CONNECT_DELTA_V
+        if (stable(c,connection_window(s)
                    && fabs(s->il)<=C07_RAMP_CURRENT_A,now,C07_CONNECT_STABLE_US))
             enter(c,C07_CONNECT_BATTERY,now);
         else if (elapsed>=C07_RAMP_TIMEOUT_US) c07_charger_trip(c,"OUTPUT_RAMP_TIMEOUT",now);
         break;
     case C07_CONNECT_BATTERY:
         if (fabs(s->vout-s->vbat)>C07_RUN_DELTA_V) c07_charger_trip(c,"BATTERY_CONNECT_VOLTAGE",now);
-        else if (stable(c,fabs(s->vout-s->vbat)<=C07_CONNECT_DELTA_V,now,C07_CONNECT_STABLE_US)) {
+        else if (stable(c,connected_voltage_stable(s),now,C07_CONNECT_STABLE_US)) {
             if (c07_start_tracking(&c->regulator,c->open_voltage,s->vbat)!=0)
                 c07_charger_trip(c,"CONTROL_START",now);
             else enter(c,C07_CHARGING,now);
@@ -111,12 +144,21 @@ const c07_command *c07_charger_step(c07_charger *c, const c07_inputs *i,
         break;
     case C07_CHARGING:
         if (fabs(s->vout-s->vbat)>C07_RUN_DELTA_V) c07_charger_trip(c,"BATTERY_PATH_VOLTAGE",now);
-        else if (s->vin<=s->vbat+C07_HEADROOM_V) { c->stop_battery_enabled=true; enter(c,C07_STOPPING,now); }
         break;
     case C07_STOPPING:
         if (stable(c,fabs(s->il)<=C07_STOP_CURRENT_A,now,C07_STOP_STABLE_US)) {
             enter(c,C07_IDLE,now); c07_reset(&c->regulator);
         } else if (elapsed>=C07_STOP_TIMEOUT_US) c07_charger_trip(c,"STOP_CURRENT_TIMEOUT",now);
+        break;
+    case C07_WAIT_INPUT:
+        /* Ordinary source shortage disconnects the battery immediately.
+         * Retry only after sustained open-circuit headroom, through CLEAR,
+         * PV rearm, BIAS and the output ramp. Hardware faults stay latched. */
+        if(stable(c,r->run&&i->pv_stopped
+           &&s->vpv>s->vbat+C07_HEADROOM_V+C07_INPUT_RESTART_MARGIN_V,
+           now,C07_INPUT_RETRY_US)){
+            c->open_voltage=s->vpv;enter(c,C07_CLEAR,now);
+        }
         break;
     case C07_FAULT: break;
     }
@@ -129,6 +171,7 @@ const c07_command *c07_charger_step(c07_charger *c, const c07_inputs *i,
     o->pv_rearm=c->state==C07_PV_CONNECT&&c->rearm_started&&!c->rearm_finished;
     o->bias_enable=c->state>=C07_BIAS&&c->state<=C07_STOPPING;
     o->battery_enable=c->state==C07_CONNECT_BATTERY||c->state==C07_CHARGING;
+    o->synchronous_allowed=c->state==C07_CHARGING;
     if (c->state==C07_STOPPING) o->battery_enable=c->stop_battery_enabled;
     else if (switching_state) {
         if (c07_step(&c->regulator,s,(uint32_t)dt,c->state==C07_CHARGING,&o->duty)!=0)
@@ -138,6 +181,6 @@ const c07_command *c07_charger_step(c07_charger *c, const c07_inputs *i,
 }
 const char *c07_state_name(c07_state state) {
     static const char *names[]={"IDLE","CLEAR","PV_CONNECT","BIAS","RAMP_OUTPUT",
-        "CONNECT_BATTERY","CHARGING","STOPPING","FAULT"};
-    return (unsigned)state<=(unsigned)C07_FAULT ? names[(unsigned)state] : "INVALID";
+        "CONNECT_BATTERY","CHARGING","STOPPING","FAULT","WAIT_INPUT"};
+    return (unsigned)state<=(unsigned)C07_WAIT_INPUT ? names[(unsigned)state] : "INVALID";
 }

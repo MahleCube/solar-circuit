@@ -16,8 +16,10 @@ typedef C07_REAL_TYPE c07_real_t;
 #define C07_CONFIG_REAL_FIELDS(X) \
  X(DUTY_MIN, .03) X(DUTY_MAX, .90) \
  X(CHARGE_CURRENT_A, 15.) X(CHARGE_VOLTAGE_V, 57.1) \
- X(VOUT_TRIP_V, 58.) X(PV_HEADROOM_V, 5.) X(CONNECT_OFFSET_V, .1) \
+ X(VOUT_TRIP_V, 58.) X(PV_HEADROOM_V, 5.) X(CONNECT_OFFSET_V, .15) \
  X(RAMP_CURRENT_A, .5) X(CURRENT_DEADBAND_A, .05) X(VOLTAGE_DEADBAND_V, .03) \
+ X(RAMP_COUT_MIN_F, .000768) X(RAMP_L_MIN_H, .000150) X(RAMP_L_MAX_H, .000250) \
+ X(RAMP_DIODE_VF_V, .8) X(RAMP_VOLTAGE_ERROR_V, .03) \
  X(DUTY_RISE_PER_S, .3) X(CURRENT_REDUCTION_PER_A_S, 3.) \
  X(VOLTAGE_REDUCTION_PER_V_S, 4.) X(POWER_DEADBAND_W, .2) \
  X(MPPT_INITIAL_FRACTION, .82) X(PV_KP_A_PER_V, .9) X(PV_KI_A_PER_V_S, 120.) \
@@ -34,14 +36,16 @@ typedef C07_REAL_TYPE c07_real_t;
  X(MPPT_REFERENCE_MAX_V, 80.) X(MPPT_NOLOAD_A, .1) \
  X(MPPT_VOLTAGE_DEADBAND_V, .02835360440340909) \
  X(MPPT_CURRENT_DEADBAND_A, .01220703125) \
- X(MPPT_SLOPE_CURRENT_FLOOR_A, .1)
+ X(MPPT_SLOPE_CURRENT_FLOOR_A, .1) X(MPPT_PROBE_MAX_V, 1.)
 
 #define C07_CONFIG_TIME_FIELDS(X) \
  X(CONTROL_PERIOD_US, 1001) X(MAX_LOOP_GAP_US, 5000) \
  X(VOLTAGE_PERIOD_US, 1001) X(MPPT_PERIOD_US, 100000) \
  X(IL_FILTER_US, 0) X(VOLTAGE_FILTER_US, 1000) X(PV_D_FILTER_US, 3000) \
+ X(RAMP_VOUT_LATENCY_US, 1000) X(RAMP_PACKET_US, 800) X(RAMP_PWM_PERIOD_US, 20) \
  X(MPPT_SETTLE_US, 20000) X(MPPT_WINDOW_US, 20000) \
- X(MPPT_REACQUIRE_US, 200000) X(MPPT_MAX_PAIR_SPAN_US, 300)
+ X(MPPT_REACQUIRE_US, 200000) X(MPPT_MAX_PAIR_SPAN_US, 300) \
+ X(MPPT_MAX_HOLD_US, 100000)
 
 typedef struct {
     unsigned MPPT_METHOD; /* 0: exact legacy path, 1: P&O, 2: IncCond */
@@ -81,6 +85,11 @@ typedef struct {
     uint32_t moves, holds;
     int direction;
     bool have_previous_power;
+    /* IncCond's unresolved derivative is not proof of MPP. A finite hold
+     * permits one local probe; an inconclusive probe returns to its centre. */
+    c07_real_t probe_center_v;
+    uint32_t unresolved_us, reprobes, probe_active;
+    int probe_direction;
 } c07_mppt;
 
 /* Single-core IRQ/main mailbox. Each payload is published by an aligned
@@ -117,6 +126,7 @@ typedef struct {
     bool initialized, tracking_started, limited, restart_feedforward_pending;
     bool off_current_hold;
     c07_limit limit_reason;
+    c07_real_t ramp_applied_duty; /* previous startup output, excluding inhibited packets */
 } c07_controller;
 
 void c07_config_defaults(c07_config *cfg);
@@ -124,7 +134,7 @@ int c07_init(c07_controller *controller, const c07_config *cfg);
 void c07_reset(c07_controller *controller);
 int c07_start_tracking(c07_controller *controller, c07_real_t open_voltage,
                        c07_real_t battery_voltage);
-/* charging=false: original limited COUT ramp; charging=true: cascaded PI+MPPT.
+/* charging=false: energy-aware limited COUT ramp; charging=true: cascaded PID/PI+MPPT.
  * Returns error with duty_out=0 and controller reset on invalid input. The
  * caller must immediately disable PWM and latch the supervisory fault. */
 int c07_step(c07_controller *controller, const c07_sample *sample,

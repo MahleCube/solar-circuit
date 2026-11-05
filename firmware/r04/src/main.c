@@ -76,7 +76,11 @@ static void control_timer_irq(void){
  if(control_us>max_control_us)max_control_us=control_us;
  if(time_us_64()>=next_tick_us){c07_board_stop(&board);c07_charger_trip(&charger,"CONTROL_DEADLINE",time_us_64());goto deadline;}
  const char *error=c07_board_apply(&board,output);
- if(error){c07_board_stop(&board);c07_charger_trip(&charger,error,time_us_64());}
+ if(error){
+  c07_board_stop(&board);
+  if(!strcmp(error,"INPUT_HEADROOM_LOST"))c07_charger_wait_input(&charger,time_us_64());
+  else c07_charger_trip(&charger,error,time_us_64());
+ }
  if(watchdog_started)watchdog_update();
  deadline:;
  uint32_t status_id=atomic_load_explicit(&requested_status,memory_order_acquire);
@@ -132,10 +136,12 @@ int main(void){
  config.CHARGE_CURRENT_A=C07_CHARGE_CURRENT_A;config.CHARGE_VOLTAGE_V=C07_CHARGE_VOLTAGE_V;
  config.VOUT_TRIP_V=C07_VOUT_TRIP_V;config.PV_HEADROOM_V=C07_HEADROOM_V;
  config.CONNECT_OFFSET_V=C07_CONNECT_OFFSET_V;config.RAMP_CURRENT_A=C07_RAMP_CURRENT_A;config.TSINK_MAX_C=C07_TSINK_MAX_C;
+ config.RAMP_VOLTAGE_ERROR_V=C07_RAMP_VOLTAGE_ERROR_V;
+ config.RAMP_PACKET_US=C07_PIO_LEASE_US+C07_PLAN_BUDGET_US;
  c07_selection_apply(&config);
  if(c07_board_init(&board)!=0||c07_charger_init(&charger,&config)!=0){c07_board_stop(&board);while(true)tight_loop_contents();}
  stdio_init_all();atomic_store(&requested_run,C07_ARM_ON_BOOT&&!watchdog_caused_reboot());
- printf("c07 r04: DISARMED; fixed timer IRQ control + background IncCond.\n");
+ printf("c07 r04: DISARMED; synchronous commutation, independent PIO interlocks, background IncCond.\n");
  hardware_alarm_claim(0);irq_set_exclusive_handler(TIMER_IRQ_0,control_timer_irq);irq_set_priority(TIMER_IRQ_0,0);
  next_tick_us=time_us_64()+C07_LOOP_US;timer_hw->intr=1u;hw_set_bits(&timer_hw->inte,1u);timer_hw->alarm[0]=(uint32_t)next_tick_us;
  irq_set_enabled(TIMER_IRQ_0,true);
