@@ -17,18 +17,17 @@ static bool stable(c07_charger *c, bool condition, uint64_t now, uint32_t durati
     if (!c->stable_valid) { c->stable_valid=true; c->stable_since_us=now; }
     return now-c->stable_since_us>=duration;
 }
-static bool connection_window(const c07_sample *s){
-    double e=c07_commissioning.commutation.qualified
-        ?c07_commissioning.commutation.vout_error_v+c07_commissioning.commutation.battery_voltage_error_v:0;
-    double d=s->vout-s->vbat;
-    return d-e>=0&&d+e<=C07_CONNECT_DELTA_V;
-}
 static bool connected_voltage_stable(const c07_sample *s){
-    double e=c07_commissioning.commutation.qualified
-        ?c07_commissioning.commutation.vout_error_v+c07_commissioning.commutation.battery_voltage_error_v:0;
-    /* Once connected, the battery normally clamps Cout close to Vbat. The
-     * pre-connection positive difference is no longer a required condition. */
-    return fabs(s->vout-s->vbat)+e<=C07_CONNECT_DELTA_V;
+    /* BAT_EN permits the LTC4364, not forced closure of a bilateral switch.
+     * Its ideal diode blocks a charged battery from an empty Cout. This is
+     * an operating-path check, not a precision preconnection voltage window. */
+    return fabs(s->vout-s->vbat)<=C07_RUN_DELTA_V;
+}
+static bool input_available(const c07_sample *s){
+    /* Also check residual Cin: battery headroom alone cannot exclude a
+     * panel below the disconnected input capacitor. */
+    return s->vpv>s->vbat+C07_HEADROOM_V+C07_INPUT_RESTART_MARGIN_V
+        &&s->vpv>s->vin+C07_PV_CONNECT_MARGIN_V;
 }
 int c07_charger_init(c07_charger *c, const c07_config *config) {
     if (!c || !config) return -1;
@@ -54,16 +53,19 @@ const char *c07_measurement_fault(const c07_inputs *i) {
     if (!(s->vpv>=0 && s->vpv<C07_VPV_TRIP_V)) return "VPV_RANGE";
     /* Upper operating targets belong to regulation. A sample above 15 A
      * alone is not a latched fault. board.c rejects ADC rails; hardware fault
-     * inputs below remain independent. Qualified signed-current limits are
+     * inputs below remain independent. Configured signed-current limits are
      * operating-envelope checks, not cycle-by-cycle current protection. */
     if (!(s->ipv>C07_REVERSE_TRIP_A)) return "IPV_RANGE";
-    double il_min=c07_commissioning.commutation.qualified
+    double il_min=c07_commissioning.commutation.enabled
         ?c07_commissioning.commutation.minimum_current_a:C07_REVERSE_TRIP_A;
     if (!(s->il>il_min)) return "IL_RANGE";
-    if(c07_commissioning.commutation.qualified&&s->il>=c07_commissioning.commutation.maximum_current_a)
+    if(c07_commissioning.commutation.enabled&&s->il>=c07_commissioning.commutation.maximum_current_a)
         return "IL_RANGE";
     if (!(s->vout>=0 && s->vout<C07_VOUT_TRIP_V)) return "VOUT_RANGE";
-    if (!(s->vbat>=C07_VBAT_MIN_V && s->vbat<C07_VBAT_TRIP_V)) return "VBAT_RANGE";
+    /* Nominal conversion reports the ADC bin's lower edge. A physical 42V
+     * sample is code 1481 = 41.9917V; retain that bin, not only code 1482.
+     * This one-LSB allowance is quantization, not a general calibration waiver. */
+    if (!(s->vbat+C07_VOLTAGE_LSB_V>=C07_VBAT_MIN_V && s->vbat<C07_VBAT_TRIP_V)) return "VBAT_RANGE";
     if (!(s->tbat>=C07_TBAT_MIN_C && s->tbat<C07_TBAT_MAX_C)) return "TBAT_RANGE";
     if (!(s->tsink>=-40 && s->tsink<C07_TSINK_MAX_C)) return "TSINK_RANGE";
     return NULL;
@@ -84,22 +86,26 @@ const c07_command *c07_charger_step(c07_charger *c, const c07_inputs *i,
     if (!reason&&i->pv_fault) reason="PV_OVERCURRENT";
     if(!reason&&c->state>=C07_RAMP_OUTPUT&&c->state<=C07_CHARGING&&!i->bias_good)
         reason="BIAS_LOST";
-    if(!reason&&c->state>=C07_BIAS&&c->state<=C07_CHARGING&&i->pv_stopped)
-        reason="PV_STOPPED";
-    /* Input collapse is different from a normal current-decay stop: keeping
-     * BAT_EN on can feed a reverse path through L1 and Q1's body diode. */
+    if(!reason&&i->pwm_events&&i->pwm_events!=3u)
+        reason=(i->pwm_events&4u)?"PIO_LEASE_EXPIRED":"PIO_INTERLOCK";
+    /* Input collapse is different from a normal current-decay stop. Disable
+     * all paths and let the protection ICs enforce their reverse blocking. */
     if (c->state==C07_FAULT) {
         if (reset_edge&&!r->run&&!reason&&i->pv_stopped) { c->fault=""; enter(c,C07_IDLE,now); }
         return o;
     }
     if (reason) { c07_charger_trip(c,reason,now); return o; }
+    if((c->state>=C07_BIAS&&c->state<=C07_STOPPING)
+       &&(i->pv_stopped||i->pwm_events==3u)){
+        c07_charger_wait_input(c,now);return o;
+    }
     if(c->state>=C07_RAMP_OUTPUT&&c->state<=C07_STOPPING
        &&s->vin<=s->vout+C07_HEADROOM_V){
         c07_charger_wait_input(c,now);return o;
     }
     if (!r->run && c->state!=C07_IDLE && c->state!=C07_STOPPING) {
         if (c->state==C07_RAMP_OUTPUT||c->state==C07_CONNECT_BATTERY||c->state==C07_CHARGING) {
-            c->stop_battery_enabled=c->state==C07_CONNECT_BATTERY||c->state==C07_CHARGING;
+            c->stop_battery_enabled=true;
             enter(c,C07_STOPPING,now);
         } else enter(c,C07_IDLE,now);
     }
@@ -107,21 +113,25 @@ const c07_command *c07_charger_step(c07_charger *c, const c07_inputs *i,
     switch(c->state) {
     case C07_IDLE:
         c07_reset(&c->regulator);
-        if (r->run && s->vpv>s->vbat+C07_HEADROOM_V
-            && s->vbat<C07_CHARGE_VOLTAGE_V-C07_CONNECT_OFFSET_V) {
+        if (r->run && input_available(s)
+            && s->vbat<C07_CHARGE_VOLTAGE_V) {
             c->open_voltage=s->vpv; enter(c,C07_CLEAR,now);
         } break;
     case C07_CLEAR:
         if (elapsed>=C07_CLEAR_US) {
             if (!i->pv_stopped) c07_charger_trip(c,"PV_CLEAR_FAILED",now);
+            else if(!input_available(s))c07_charger_wait_input(c,now);
             else enter(c,C07_PV_CONNECT,now);
         } break;
     case C07_PV_CONNECT:
+        if(!c->rearm_started&&!input_available(s)){
+            c07_charger_wait_input(c,now);break;
+        }
         if (!c->rearm_started&&elapsed>=C07_LOOP_US) { c->rearm_started=true; c->rearm_started_us=now; }
         if (c->rearm_started&&now-c->rearm_started_us>=C07_REARM_US) c->rearm_finished=true;
         if (stable(c,!i->pv_stopped&&s->vin>s->vbat+C07_HEADROOM_V&&c->rearm_finished,
                    now,C07_INPUT_STABLE_US)) enter(c,C07_BIAS,now);
-        else if (elapsed>=C07_PV_TIMEOUT_US) c07_charger_trip(c,"PV_CONNECT_TIMEOUT",now);
+        else if (elapsed>=C07_PV_TIMEOUT_US) c07_charger_wait_input(c,now);
         break;
     case C07_BIAS:
         if (stable(c,i->bias_good,now,C07_BIAS_STABLE_US)) {
@@ -129,14 +139,16 @@ const c07_command *c07_charger_step(c07_charger *c, const c07_inputs *i,
         } else if (elapsed>=C07_BIAS_TIMEOUT_US) c07_charger_trip(c,"BIAS_TIMEOUT",now);
         break;
     case C07_RAMP_OUTPUT:
-        if (stable(c,connection_window(s)
-                   && fabs(s->il)<=C07_RAMP_CURRENT_A,now,C07_CONNECT_STABLE_US))
+        if (stable(c,connected_voltage_stable(s),now,C07_CONNECT_STABLE_US))
             enter(c,C07_CONNECT_BATTERY,now);
         else if (elapsed>=C07_RAMP_TIMEOUT_US) c07_charger_trip(c,"OUTPUT_RAMP_TIMEOUT",now);
         break;
     case C07_CONNECT_BATTERY:
-        if (fabs(s->vout-s->vbat)>C07_RUN_DELTA_V) c07_charger_trip(c,"BATTERY_CONNECT_VOLTAGE",now);
-        else if (stable(c,connected_voltage_stable(s),now,C07_CONNECT_STABLE_US)) {
+        /* The UV-release ramp can temporarily exceed Vbat+1V before HGATE
+         * rises. Keep its low-current/voltage cap, reset the settling window,
+         * and wait for the normal IC path; do not misclassify that as a fault.
+         * This settling policy is not an independent failed-IC detector. */
+        if (stable(c,connected_voltage_stable(s),now,C07_BATTERY_READY_US)) {
             if (c07_start_tracking(&c->regulator,c->open_voltage,s->vbat)!=0)
                 c07_charger_trip(c,"CONTROL_START",now);
             else enter(c,C07_CHARGING,now);
@@ -154,8 +166,7 @@ const c07_command *c07_charger_step(c07_charger *c, const c07_inputs *i,
         /* Ordinary source shortage disconnects the battery immediately.
          * Retry only after sustained open-circuit headroom, through CLEAR,
          * PV rearm, BIAS and the output ramp. Hardware faults stay latched. */
-        if(stable(c,r->run&&i->pv_stopped
-           &&s->vpv>s->vbat+C07_HEADROOM_V+C07_INPUT_RESTART_MARGIN_V,
+        if(stable(c,r->run&&i->pv_stopped&&input_available(s),
            now,C07_INPUT_RETRY_US)){
             c->open_voltage=s->vpv;enter(c,C07_CLEAR,now);
         }
@@ -164,13 +175,13 @@ const c07_command *c07_charger_step(c07_charger *c, const c07_inputs *i,
     }
     bool power_state=c->state>=C07_BIAS&&c->state<=C07_CHARGING;
     bool switching_state=c->state>=C07_RAMP_OUTPUT&&c->state<=C07_CHARGING;
-    if (power_state&&i->pv_stopped) c07_charger_trip(c,"PV_STOPPED",now);
+    if (power_state&&i->pv_stopped) { c07_charger_wait_input(c,now);return o; }
     if (switching_state&&!i->bias_good) c07_charger_trip(c,"BIAS_LOST",now);
     if (c->state==C07_FAULT) return o;
     o->pv_enable=c->state>=C07_PV_CONNECT&&c->state<=C07_STOPPING;
     o->pv_rearm=c->state==C07_PV_CONNECT&&c->rearm_started&&!c->rearm_finished;
     o->bias_enable=c->state>=C07_BIAS&&c->state<=C07_STOPPING;
-    o->battery_enable=c->state==C07_CONNECT_BATTERY||c->state==C07_CHARGING;
+    o->battery_enable=switching_state;
     o->synchronous_allowed=c->state==C07_CHARGING;
     if (c->state==C07_STOPPING) o->battery_enable=c->stop_battery_enabled;
     else if (switching_state) {

@@ -19,21 +19,35 @@ static void output_low(unsigned pin) {
     /* Set the SIO output latch before switching the pad away from PIO. */
     gpio_put(pin,0); gpio_set_function(pin,GPIO_FUNC_SIO); gpio_set_dir(pin,GPIO_OUT);
 }
-static void status(c07_board *b) {
-    b->inputs.bias_good=!gpio_get(C07_BIAS_PG);
-    b->inputs.battery_fault=!gpio_get(C07_BAT_FLT_N);
-    b->inputs.pv_fault=!gpio_get(C07_PV_FLT_N);
-    b->inputs.pv_stopped=gpio_get(C07_PV_STOPPED);
+static void status(c07_board *b, bool merge) {
+    /* One GPIO snapshot; faults observed earlier in this ADC/apply frame do
+     * not disappear merely because a pin recovers before the supervisor acts. */
+    uint32_t pins=gpio_get_all();
+    bool bias_good=(pins&(1u<<C07_BIAS_PG))==0;
+    bool battery_fault=(pins&(1u<<C07_BAT_FLT_N))==0;
+    bool pv_fault=(pins&(1u<<C07_PV_FLT_N))==0;
+    bool pv_stopped=(pins&(1u<<C07_PV_STOPPED))!=0;
+    /* Once this frame intentionally disabled BIAS, a later stop call must not
+     * reinterpret the resulting PG loss as the cause of the earlier stop. */
+    if(!merge)b->inputs.bias_good=bias_good;
+    else if(b->bias_enabled)b->inputs.bias_good=b->inputs.bias_good&&bias_good;
+    b->inputs.battery_fault=merge?(b->inputs.battery_fault||battery_fault):battery_fault;
+    b->inputs.pv_fault=merge?(b->inputs.pv_fault||pv_fault):pv_fault;
+    b->inputs.pv_stopped=merge?(b->inputs.pv_stopped||pv_stopped):pv_stopped;
+    b->inputs.pwm_events|=c07_pwm_engine_events(&b->pwm);
 }
 static bool pending_pio_fault(c07_board *b) {
-    return c07_pwm_engine_fault(&b->pwm);
+    b->inputs.pwm_events|=c07_pwm_engine_events(&b->pwm);
+    return b->inputs.pwm_events!=0;
 }
-static bool pwm_off(c07_board *b) {
-    bool fault=c07_pwm_engine_stop(&b->pwm);
+static uint32_t pwm_off(c07_board *b) {
+    uint32_t events=c07_pwm_engine_stop(&b->pwm);
+    b->inputs.pwm_events|=events;
     b->pwm_enabled=false;c07_commutation_reset(&b->commutation);
-    return fault;
+    return b->inputs.pwm_events;
 }
 void c07_board_stop(c07_board *b) {
+    if(b->initialized)status(b,true);
     pwm_off(b);
     output_low(C07_REARM); output_low(C07_PV_RUN);
     output_low(C07_BAT_EN); output_low(C07_BIAS_EN);
@@ -64,6 +78,9 @@ int c07_board_init(c07_board *b) {
 const c07_inputs *c07_board_read(c07_board *b) {
     c07_inputs *i=&b->inputs;
     i->sample.valid=false; i->error=NULL; i->completed_us=0;
+    /* The previous frame has been consumed by the supervisor/apply path.
+     * FAULT state retention belongs to the supervisor, not a resettable pin. */
+    i->pwm_events=0;status(b,false);
     i->sample.pv_pair_span_us=-1;
     i->sample_us=time_us_64();
     for(unsigned n=0;n<8;n++) { i->adc_start_us[n]=UINT32_MAX; i->adc_end_us[n]=UINT32_MAX; }
@@ -100,7 +117,7 @@ const c07_inputs *c07_board_read(c07_board *b) {
             i->sample.vbat=physical[6]; i->sample.vpv=physical[7];
         }
     }
-    status(b);
+    status(b,true);
     uint64_t completed=time_us_64();
     i->age_us=(uint32_t)(completed-i->sample_us);
     if (!i->error&&i->age_us>C07_MAX_SAMPLE_AGE_US) i->error="ADC_DEADLINE";
@@ -131,15 +148,27 @@ const char *c07_board_apply(c07_board *b, const c07_command *o) {
     const char *reason=NULL;
     if(o->bias_enable||o->pv_enable||o->battery_enable||o->pv_rearm)
         reason=b->configuration_error;
-    if(!reason&&o->battery_enable&&!b->battery_enabled){
-        double d=b->inputs.sample.vout-b->inputs.sample.vbat;
-        double e=c07_commissioning.commutation.vout_error_v+c07_commissioning.commutation.battery_voltage_error_v;
-        if(d-e<0||d+e>C07_CONNECT_DELTA_V)reason="BATTERY_CONNECT_UNCERTAINTY";
-    }
     if (!isfinite(o->duty)|| (o->duty!=0&&(o->duty<C07_DUTY_MIN||o->duty>C07_DUTY_MAX))) reason="PWM_DUTY";
     if (!reason&&o->pv_rearm&&(!o->pv_enable||o->duty!=0)) reason="REARM_COMMAND";
     if (!reason&&o->duty!=0&&(!o->bias_enable||!o->pv_enable)) reason="PWM_PERMISSION";
-    status(b);
+    status(b,true);
+    const bool all_off=o->duty==0&&!o->bias_enable&&!o->pv_enable
+        &&!o->battery_enable&&!o->pv_rearm;
+    if(!reason&&all_off){
+        bool was_bias_enabled=b->bias_enabled;
+        c07_board_stop(b); /* sample/stop/retain causes before disabling BIAS */
+        uint32_t events=b->inputs.pwm_events;
+        if(b->inputs.battery_fault)return "BATTERY_INTERLOCK";
+        if(b->inputs.pv_fault)return "PV_INTERLOCK";
+        if(was_bias_enabled&&!b->inputs.bias_good)return "BIAS_INTERLOCK";
+        if(events==C07_PWM_EVENT_PV_ONLY&&!b->inputs.pv_fault&&!b->inputs.battery_fault
+           &&(!was_bias_enabled||b->inputs.bias_good)){
+            /* The supervisor selected WAIT_INPUT; acknowledge only this exact
+             * stopped-output case. Any hard, lease or unknown event is a fault. */
+            b->inputs.pwm_events=0;return NULL;
+        }
+        return events?"PIO_INTERLOCK":NULL;
+    }
     if (!reason&&(o->bias_enable||o->pv_enable||o->pv_rearm||o->battery_enable)) {
         uint64_t now=time_us_64();
         if (!b->inputs.sample.valid||o->sample_us!=b->inputs.sample_us||now<o->sample_us

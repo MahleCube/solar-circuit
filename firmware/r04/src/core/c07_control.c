@@ -295,6 +295,7 @@ static bool valid_config(const c07_config *c){
       && c->CV_KP_A_PER_V>=R(0) && c->CV_KI_A_PER_V_S>=R(0)
       && c->CHARGE_CURRENT_A>R(0) && c->INPUT_FOLDBACK_BAND_V>R(0)
       && c->RAMP_CURRENT_A>R(0) && c->RAMP_COUT_MIN_F>R(0)
+      && c->RAMP_MIN_TARGET_V>=R(0) && c->RAMP_MIN_TARGET_V<c->CHARGE_VOLTAGE_V
       && c->RAMP_L_MIN_H>R(0) && c->RAMP_L_MAX_H>=c->RAMP_L_MIN_H
       && c->RAMP_DIODE_VF_V>R(0) && c->RAMP_VOLTAGE_ERROR_V>=R(0)
       && c->RAMP_VOUT_LATENCY_US>0 && c->RAMP_PACKET_US>0
@@ -337,7 +338,13 @@ int c07_start_tracking(c07_controller *s,c07_real_t voc,c07_real_t battery){
 }
 static c07_real_t ramp(c07_controller *s,const c07_sample *i,uint32_t us){
     const c07_config *c=&s->cfg;
-    c07_real_t target=lo(i->vbat+c->CONNECT_OFFSET_V,lo(c->CHARGE_VOLTAGE_V,c->VOUT_TRIP_V-R(.5)));
+    /* LTC4364 UV divider: 243k/(2.74k+4.99k), all 0.1% TNPW parts.
+     * At the selected IC threshold envelope the UV rising bound is 44.199V
+     * (falling 41.599V). A 42V battery must not cap startup at only 42.5V.
+     * 44.5V leaves room for the declared voltage/RC allowance while the IC
+     * starts; once it conducts, the battery clamps Vout below this ceiling. */
+    c07_real_t target=lo(hi(i->vbat+c->CONNECT_OFFSET_V,c->RAMP_MIN_TARGET_V),
+                         lo(c->CHARGE_VOLTAGE_V,c->VOUT_TRIP_V-R(.5)));
     s->limited=true;s->limit_reason=C07_LIMIT_STARTUP;
     /* Startup is diode-emulation, not a voltage PI loop. Do not add the
      * charging loop's 1ms voltage filter to the physical 323us sensor RC.

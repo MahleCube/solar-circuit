@@ -77,9 +77,27 @@ static void control_timer_irq(void){
  if(time_us_64()>=next_tick_us){c07_board_stop(&board);c07_charger_trip(&charger,"CONTROL_DEADLINE",time_us_64());goto deadline;}
  const char *error=c07_board_apply(&board,output);
  if(error){
+  /* An input stop can arrive after the supervisor sampled its frame.
+   * board retains PIO causes and the GPIO fault snapshot before turning the
+   * bias supply off. Only an identified ordinary PV stop is retryable. */
   c07_board_stop(&board);
-  if(!strcmp(error,"INPUT_HEADROOM_LOST"))c07_charger_wait_input(&charger,time_us_64());
-  else c07_charger_trip(&charger,error,time_us_64());
+  /* stop() can capture an additional fault while clamping the outputs.
+   * Classify AFTER that snapshot; neither headroom nor a PV tag may erase it. */
+  bool clean_stop=board.inputs.bias_good&&!board.inputs.pv_fault&&!board.inputs.battery_fault
+      &&(!board.inputs.pwm_events||board.inputs.pwm_events==3u);
+  bool input_stop=clean_stop&&(!strcmp(error,"PIO_INTERLOCK")||!strcmp(error,"OUTPUT_INTERLOCK"))
+      &&(board.inputs.pwm_events==3u
+         ||(!board.inputs.pwm_events&&board.inputs.pv_stopped));
+  if((!strcmp(error,"INPUT_HEADROOM_LOST")&&clean_stop)||input_stop)
+      c07_charger_wait_input(&charger,time_us_64());
+  else {
+   if(board.inputs.battery_fault)error="BATTERY_FAULT";
+   else if(board.inputs.pv_fault)error="PV_OVERCURRENT";
+   else if(board.inputs.pwm_events&4u)error="PIO_LEASE_EXPIRED";
+   else if(board.inputs.pwm_events&&board.inputs.pwm_events!=3u)error="PIO_INTERLOCK";
+   else if(!board.inputs.bias_good&&!strcmp(error,"INPUT_HEADROOM_LOST"))error="BIAS_LOST";
+   c07_charger_trip(&charger,error,time_us_64());
+  }
  }
  if(watchdog_started)watchdog_update();
  deadline:;

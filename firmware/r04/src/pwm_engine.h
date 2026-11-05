@@ -13,8 +13,13 @@ typedef struct {
     uint64_t lease_deadline_us;
     uint32_t words[2*C07_BURST_CYCLES];
 } c07_pwm_engine;
+enum { C07_PWM_EVENT_STOP=1u, C07_PWM_EVENT_PV_STOPPED=2u,
+       C07_PWM_EVENT_LEASE=4u, C07_PWM_EVENT_PV_ONLY=3u };
 int c07_pwm_engine_init(c07_pwm_engine *);
-bool c07_pwm_engine_stop(c07_pwm_engine *);
+/* stop returns every observed IRQ bit before clearing the hardware latches.
+ * Callers retain/classify the event; a cleared PIO bit is not fault permission. */
+uint32_t c07_pwm_engine_stop(c07_pwm_engine *);
+uint32_t c07_pwm_engine_events(const c07_pwm_engine *);
 bool c07_pwm_engine_fault(const c07_pwm_engine *);
 /* high/low are GPIO HIGH durations, in sysclk ticks. low==0 skips Q2.
  * Nominal no-stall cycle period is exactly C07_PWM_TICKS. */

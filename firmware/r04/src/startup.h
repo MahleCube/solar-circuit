@@ -9,6 +9,7 @@ typedef struct {
     c07_sample sample;
     uint64_t sample_us, completed_us, frame_id;
     uint32_t age_us, adc_start_us[8], adc_end_us[8];
+    uint32_t pwm_events; /* retained PIO IRQ bits: stop=1, PV cause=2, lease=4 */
     bool bias_good, battery_fault, pv_fault, pv_stopped;
     const char *error;
 } c07_inputs;

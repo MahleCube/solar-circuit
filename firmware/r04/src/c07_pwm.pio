@@ -28,6 +28,7 @@ tail_loop:
 .wrap
 
 ; SM1 independently monitors PG9=0, BAT_FLT13=1, PV_FLT14=1, STOPPED15=0.
+; Hard faults go directly to IRQ0. PV_STOPPED first records IRQ1.
 ; Its writes have priority over SM0. SET0 must wrap in ONE instruction.
 .program c07_interlock
     set y, 3
@@ -41,6 +42,7 @@ poll:
     jmp x!=y fault
     out x, 1
     jmp !x poll
+    irq 1
 fault:
     irq 0
 .wrap_target
@@ -48,12 +50,12 @@ fault:
 .wrap
 
 ; SM2 hardware lease also has priority over SM0. It cannot renew itself.
+; CPU preloads X while disabled. IRQ2 records expiry before the common IRQ0.
 ; A stalled CPU or DMA cannot issue pulses beyond this time limit.
 .program c07_lease
-    pull block
-    out x, 32
 lease:
     jmp x-- lease [31]
+    irq 2
     irq 0
 .wrap_target
     set pins, 0
