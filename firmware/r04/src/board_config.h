@@ -10,8 +10,7 @@ enum { C07_PWM_H=6, C07_PWM_L=7, C07_BIAS_EN=8, C07_BIAS_PG=9,
 #define C07_CPU_HZ 125000000u
 #define C07_PWM_HZ 50000u
 #define C07_PWM_TICKS 2500u
-#define C07_BURST_CYCLES 30u
-/* Finite 600 us packet. 501 us failed the compiled complete ISR budget. */
+/* Control updates and the autonomous 20 us PWM period are independent. */
 #define C07_LOOP_US 601u
 #define C07_PIO_LEASE_US 700u
 #define C07_PIO_DEAD_HL_TICKS 128u
