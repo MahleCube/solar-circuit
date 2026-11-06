@@ -144,10 +144,16 @@ typedef struct {
     c07_real_t ramp_applied_duty; /* previous startup output, excluding inhibited packets */
     c07_real_t current_feedback, dcm_current_floor;
     c07_real_t pulse_area_factor; /* T/(2L), immutable-config derived */
+    c07_real_t period_dt_s[3],period_il_alpha[3],period_voltage_alpha[3],period_derivative_alpha[3];
     c07_real_t mppt_previous_raw_v, mppt_previous_raw_i;
     bool mppt_raw_valid;
     uint32_t mppt_discontinuities;
     uint64_t mppt_fast_until_us;
+    /* Finite positive-Duty hold on a suspicious raw-current drop. */
+    c07_real_t guard_prev_il,guard_prev_vin,guard_prev_vout,guard_prev_duty;
+    c07_real_t guard_held_il,guard_held_target,guard_duty_ceiling,guard_recovery_band;
+    uint32_t guard_remaining_us;
+    bool guard_previous_valid,guard_tracked;
 } c07_controller;
 
 void c07_config_defaults(c07_config *cfg);

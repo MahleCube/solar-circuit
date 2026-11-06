@@ -25,6 +25,17 @@ typedef enum { C07_IDLE, C07_CLEAR, C07_PV_CONNECT, C07_BIAS,
     C07_RAMP_OUTPUT, C07_CONNECT_BATTERY, C07_CHARGING, C07_STOPPING,
     C07_FAULT, C07_WAIT_INPUT, C07_CHARGE_HOLD } c07_state;
 
+/* Rolling diagnostic. One entry is one actual measured interval.
+ * Three ordinary 601 us intervals retain the original 1803 us observation.
+ * Near-zero and nonzero histories never share samples. */
+typedef struct {
+    c07_real_t input_charge, upper_charge, volt_seconds, ripple, start_vin;
+    uint32_t dt_us;
+} c07_feedback_interval;
+typedef struct {
+    c07_real_t input_charge, upper_charge, start_vin;
+    uint32_t dt_us;
+} c07_input_feedback_interval;
 typedef struct {
     c07_state state;
     const char *fault;
@@ -51,6 +62,10 @@ typedef struct {
     c07_real_t input_feedback_prev_vout, input_feedback_prev_ipv;
     c07_real_t input_feedback_prev_il, input_feedback_prev_duty;
     c07_real_t input_feedback_charge, input_feedback_upper_charge;
+    c07_feedback_interval feedback_intervals[3];
+    c07_input_feedback_interval input_feedback_intervals[3];
+    unsigned feedback_interval_count,feedback_interval_next;
+    unsigned input_feedback_interval_count,input_feedback_interval_next;
     c07_controller regulator;
     c07_command command;
 } c07_charger;

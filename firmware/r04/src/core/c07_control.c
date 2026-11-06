@@ -12,6 +12,14 @@ static c07_real_t lo(c07_real_t a,c07_real_t b){return a<b?a:b;}
 static c07_real_t hi(c07_real_t a,c07_real_t b){return a>b?a:b;}
 static c07_real_t absr(c07_real_t a){return a<R(0)?-a:a;}
 static c07_real_t clamp(c07_real_t x,c07_real_t a,c07_real_t b){return hi(a,lo(b,x));}
+/* Integer microsecond timestamps can differ by one tick at a fixed cadence.
+ * Cache each actual interval separately; do not round a measured dt. */
+static unsigned period_slot(uint32_t nominal,uint32_t measured){
+    if(measured==nominal)return 0;
+    if(measured<nominal&&nominal-measured==1)return 1;
+    if(measured>nominal&&measured-nominal==1)return 2;
+    return 3;
+}
 /* Timers saturate instead of wrapping during indefinite unsettled operation. */
 static uint32_t add_time(uint32_t a,uint32_t b){return UINT32_MAX-a<b?UINT32_MAX:a+b;}
 static void pi_track(c07_pi *p,c07_real_t output,c07_real_t error,c07_real_t ff){
@@ -366,6 +374,19 @@ int c07_init(c07_controller *s,const c07_config *c){
     atomic_init(&s->async.request_seq,0);atomic_init(&s->async.result_seq,0);
     s->cfg=*c;
     s->pulse_area_factor=R(c->RAMP_PWM_PERIOD_US)/(R(2000000)*c->BUCK_L_H);
+    /* Immutable configuration: precompute the original expressions for
+     * nominal and adjacent timer ticks. Other measured intervals retain
+     * the original arithmetic. Neither dt nor filter response is changed. */
+    for(unsigned k=0;k<3;k++){
+        uint32_t period=c->CONTROL_PERIOD_US;
+        if(k==1&&period>1)period--;
+        if(k==2&&period<UINT32_MAX)period++;
+        c07_real_t t=R(period);
+        s->period_dt_s[k]=t/R(1000000);
+        s->period_il_alpha[k]=t/(R(c->IL_FILTER_US)+t);
+        s->period_voltage_alpha[k]=t/(R(c->VOLTAGE_FILTER_US)+t);
+        s->period_derivative_alpha[k]=t/(R(c->PV_D_FILTER_US)+t);
+    }
     s->pv_pi.kp=c->PV_KP_A_PER_V;s->pv_pi.ki=c->PV_KI_A_PER_V_S;
     s->current_pi.kp=c->IL_KP_DUTY_PER_A;s->current_pi.ki=c->IL_KI_DUTY_PER_A_S;
     s->cv_pi.kp=c->CV_KP_A_PER_V;s->cv_pi.ki=c->CV_KI_A_PER_V_S;
@@ -376,6 +397,7 @@ void c07_reset(c07_controller *s){
     c07_mppt_invalidate(s,true);
     s->duty=R(0);s->ramp_applied_duty=R(0);s->current_target=R(0);s->initialized=false;s->tracking_started=false;
     s->current=R(0);s->current_feedback=R(0);s->dcm_current_floor=R(0);
+    s->guard_previous_valid=false;s->guard_tracked=false;s->guard_remaining_us=0;
     s->mppt_raw_valid=false;s->mppt_discontinuities=0;s->mppt_fast_until_us=0;
     s->output_voltage=R(0);s->pv_voltage=R(0);s->power=R(0);
     s->pv_previous=R(0);s->pv_derivative=R(0);
@@ -462,7 +484,8 @@ static c07_real_t current_feedforward(c07_real_t ff,c07_real_t area,c07_real_t t
 }
 static c07_real_t charge(c07_controller *s,const c07_sample *i,uint32_t us){
     const c07_config *c=&s->cfg;
-    c07_real_t dt=R(us)/R(1000000);
+    unsigned slot=period_slot(c->CONTROL_PERIOD_US,us);
+    c07_real_t dt=slot<3?s->period_dt_s[slot]:R(us)/R(1000000);
     c07_real_t minimum=hi(i->vbat+c->PV_HEADROOM_V,
                          (hi(i->vout,i->vbat)+c->BUCK_LOSS_MARGIN_V)/c->DUTY_MAX);
     c07_real_t ff_ccm=clamp(i->vout/hi(i->vin,R(1)),R(0),c->DUTY_MAX),area=R(0);
@@ -480,6 +503,51 @@ static c07_real_t charge(c07_controller *s,const c07_sample *i,uint32_t us){
         s->dcm_current_floor=area*i->applied_duty*i->applied_duty;
         s->current_feedback=hi(s->current,s->dcm_current_floor);
     }
+    /* A sudden raw-current drop is a suspicion, not a confirmed fault.
+     * Keep ordinary raw/DCM feedback; never conceal it from diagnostics.
+     * Only positive Duty movement is held for two nominal decisions. Raw
+     * supervisory diagnostics keep deciding from the raw measurements.
+     * The existing 1 ms voltage-response allowance bounds each hold.
+     * Fixed c07 allowances match commissioning: 0.2 A per endpoint,
+     * 400 ns at 50 kHz (0.02 Duty), Vin 0.03 V, Vout 0.02 V,
+     * and one 12-bit ADC voltage code. No new hard 15 A trip.
+     * A confirmed return to the pre-drop current can undo the cap's PI bias
+     * during the hold/expiry frame, never on persistent-low expiry alone. */
+    bool guard_was_active=s->guard_remaining_us>0;
+    if(s->guard_remaining_us>us)s->guard_remaining_us-=us;
+    else s->guard_remaining_us=0;
+    bool guard_metadata=i->applied_pwm_valid&&i->applied_duty>R(0);
+    if(!guard_metadata){
+        s->guard_remaining_us=0;s->guard_previous_valid=false;s->guard_tracked=false;
+    }
+    if(guard_metadata&&s->dcm_current_floor==R(0)&&absr(i->il)<=R(.2)
+       &&s->guard_previous_valid&&!s->guard_remaining_us
+       &&s->guard_prev_il-i->il>R(.4)){
+        c07_real_t dh=lo(R(1),hi(i->applied_duty,s->guard_prev_duty)+R(.02));
+        c07_real_t vhi=hi(i->vin,s->guard_prev_vin)+R(.03)+R(.02835360440340909);
+        c07_real_t vlo=lo(i->vout,s->guard_prev_vout)-R(.02)-R(.02835360440340909);
+        c07_real_t ripple=hi(R(0),vhi-vlo)*dh*R(c->RAMP_PWM_PERIOD_US)/
+                           (R(1000000)*c->RAMP_L_MIN_H);
+        if(s->guard_prev_il-i->il>ripple+R(.4)){
+            s->guard_remaining_us=c->RAMP_VOUT_LATENCY_US;
+            s->guard_held_il=s->guard_prev_il;s->guard_duty_ceiling=i->applied_duty;
+            s->guard_held_target=s->current_target;
+            s->guard_recovery_band=ripple+R(.4);s->guard_tracked=false;
+        }
+    }
+    bool guard_active=guard_metadata&&s->guard_remaining_us>0;
+    bool guard_capped=false;
+    bool guard_recovered=false;
+    if(guard_was_active&&guard_metadata&&s->guard_tracked){
+        c07_real_t floor=s->guard_held_il-s->guard_recovery_band;
+        guard_recovered=s->guard_prev_il<floor&&i->il>=floor;
+    }
+    if(guard_active){
+        s->guard_duty_ceiling=lo(s->guard_duty_ceiling,i->applied_duty);
+    }
+    s->guard_previous_valid=guard_metadata;
+    s->guard_prev_il=i->il;s->guard_prev_vin=i->vin;s->guard_prev_vout=i->vout;
+    s->guard_prev_duty=i->applied_duty;
     c07_real_t ff=R(0);
     bool first_frame=!s->tracking_started;
     c07_real_t initial_target=R(0);
@@ -568,13 +636,29 @@ static c07_real_t charge(c07_controller *s,const c07_sample *i,uint32_t us){
     else {
         s->off_current_hold=false;
         if(s->restart_feedforward_pending){pi_track(&s->current_pi,R(0),R(0),R(0));s->restart_feedforward_pending=false;}
+        if(guard_recovered){
+            /* Recover only after the raw signal returns. Preserve negative
+             * proportional movement from lower Iref or above-pre-drop IL. */
+            c07_real_t recovered_duty=lo(i->applied_duty,i->applied_duty+
+                s->current_pi.kp*(s->current_target-s->guard_held_target+
+                                 s->guard_held_il-s->current_feedback));
+            recovered_duty=clamp(recovered_duty,R(0),c->DUTY_MAX);
+            pi_track(&s->current_pi,recovered_duty,ei,ff);
+            s->guard_tracked=false;
+        }
         s->duty=pi_step(&s->current_pi,ei,dt,R(0),c->DUTY_MAX,ff);
+        if(guard_active&&s->duty>s->guard_duty_ceiling){
+            s->duty=s->guard_duty_ceiling;
+            pi_track(&s->current_pi,s->duty,ei,ff);
+            s->guard_tracked=true;guard_capped=true;
+        }
         if(s->duty>R(0) && s->duty<c->DUTY_MIN){s->duty=R(0);s->limited=true;s->limit_reason=C07_LIMIT_MIN_DUTY;}
         else if(s->duty>=c->DUTY_MAX){
             s->limited=true;s->limit_reason=C07_LIMIT_MAX_DUTY;
             pi_track(&s->pv_pi,lo(s->current_target,hi(R(0),s->current_feedback)),ev,pv_d);
         }
     }
+    if(guard_capped){s->limited=true;s->limit_reason=C07_LIMIT_CURRENT;}
     bool pair_ok=i->pv_pair_span_us>=0 && (uint32_t)i->pv_pair_span_us<=c->MPPT_MAX_PAIR_SPAN_US;
     /* Evaluate the sustained base target, not the temporary probe B.
      * Tiny probe-induced pulses must not cancel an otherwise unloaded,
@@ -622,13 +706,17 @@ int c07_step(c07_controller *s,const c07_sample *i,uint32_t us,bool charging,c07
        ||(i->applied_pwm_valid&&(!isfinite(i->applied_duty)||i->applied_duty<R(0)||i->applied_duty>R(1)))){
         c07_reset(s);return C07_ERR_SAMPLE;
     }
-    c07_real_t ai=s->initialized?R(us)/(R(s->cfg.IL_FILTER_US)+R(us)):R(1);
-    c07_real_t av=s->initialized?R(us)/(R(s->cfg.VOLTAGE_FILTER_US)+R(us)):R(1);
+    unsigned slot=period_slot(s->cfg.CONTROL_PERIOD_US,us);
+    c07_real_t ai=!s->initialized||s->cfg.IL_FILTER_US==0?R(1):
+        (slot<3?s->period_il_alpha[slot]:R(us)/(R(s->cfg.IL_FILTER_US)+R(us)));
+    c07_real_t av=s->initialized?(slot<3?s->period_voltage_alpha[slot]:
+        R(us)/(R(s->cfg.VOLTAGE_FILTER_US)+R(us))):R(1);
     s->current+=ai*(i->il-s->current);s->output_voltage+=av*(i->vout-s->output_voltage);
     s->pv_voltage+=av*(i->vpv-s->pv_voltage);s->power=i->vpv*i->ipv;
     if(s->initialized){
         c07_real_t raw=(s->pv_voltage-s->pv_previous)*R(1000000)/R(us);
-        c07_real_t ad=R(us)/(R(s->cfg.PV_D_FILTER_US)+R(us));
+        c07_real_t ad=slot<3?s->period_derivative_alpha[slot]:
+            R(us)/(R(s->cfg.PV_D_FILTER_US)+R(us));
         s->pv_derivative+=ad*(raw-s->pv_derivative);
     }else s->pv_derivative=R(0);
     s->pv_previous=s->pv_voltage;s->initialized=true;

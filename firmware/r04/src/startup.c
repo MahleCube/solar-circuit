@@ -55,6 +55,7 @@ static bool cv_pause(const c07_charger *c,const c07_sample *s) {
 }
 static void feedback_start(c07_charger *c,const c07_sample *s,c07_real_t duty) {
     c->feedback_window_valid=true;c->feedback_window_us=0;
+    c->feedback_interval_count=0;c->feedback_interval_next=0;
     c->feedback_start_vin=c->feedback_prev_vin=s->vin;
     c->feedback_prev_vout=s->vout;c->feedback_prev_ipv=s->ipv;c->feedback_prev_duty=duty;
     c->feedback_input_charge=c->feedback_dcm_charge=c->feedback_volt_seconds=0;
@@ -96,24 +97,42 @@ static const char *feedback_fault(c07_charger *c,const c07_sample *s,
     /* Full peak ripple, not half-ripple or D*sampleIL: this is an upper envelope
      * for a zero-trough DCM waveform, using the existing minimum-L corner. */
     c07_real_t ripple=larger(0,vin_hi-vo_lo)*d_hi*c->feedback_ripple_per_v_duty;
-    c->feedback_max_ripple=larger(c->feedback_max_ripple,ripple);
-    c->feedback_input_charge+=.5*(larger(0,s->ipv)+larger(0,c->feedback_prev_ipv))*seconds;
-    c->feedback_dcm_charge+=d_hi*(2*p->current_error_a+ripple)*seconds;
+    c07_feedback_interval *part=&c->feedback_intervals[c->feedback_interval_next];
+    part->start_vin=c->feedback_prev_vin;part->dt_us=dt;part->ripple=ripple;
+    part->input_charge=smaller(larger(0,s->ipv),larger(0,c->feedback_prev_ipv))*seconds;
+    part->upper_charge=d_hi*(2*p->current_error_a+ripple)*seconds;
     /* A second witness also covers an unresponsive driver/current feedback.
      * Diode conduction and the existing loss allowance reduce this estimate.
      * Signed integration prevents a negative-drive interval counting as proof. */
     /* Same signed volt-seconds: D*Vin-Vo-(1-D)*Vf-loss, factored to remove
      * a runtime multiplication and reuse the init-owned Vf+loss constant. */
     c07_real_t drive=d_lo*(vin_lo+cfg->RAMP_DIODE_VF_V)-vo_hi-c->feedback_diode_loss_v;
-    c->feedback_volt_seconds+=drive*seconds;
-    c->feedback_window_us+=dt;
+    part->volt_seconds=drive*seconds;
+    if(++c->feedback_interval_next==3)c->feedback_interval_next=0;
+    if(c->feedback_interval_count<3)c->feedback_interval_count++;
+    /* Re-sum bounded intervals, rather than carrying an indefinite integral
+     * or retaining a discarded ripple maximum. No extra division/multiply. */
+    const c07_feedback_interval *a=&c->feedback_intervals[0];
+    c->feedback_input_charge=a->input_charge;c->feedback_dcm_charge=a->upper_charge;
+    c->feedback_volt_seconds=a->volt_seconds;c->feedback_max_ripple=a->ripple;
+    c->feedback_window_us=a->dt_us;
+    for(unsigned n=1;n<c->feedback_interval_count;n++){
+        const c07_feedback_interval *b=&c->feedback_intervals[n];
+        c->feedback_input_charge+=b->input_charge;c->feedback_dcm_charge+=b->upper_charge;
+        c->feedback_volt_seconds+=b->volt_seconds;
+        c->feedback_max_ripple=larger(c->feedback_max_ripple,b->ripple);
+        c->feedback_window_us+=b->dt_us;
+    }
+    unsigned oldest=c->feedback_interval_count==3?c->feedback_interval_next:0;
+    c->feedback_start_vin=c->feedback_intervals[oldest].start_vin;
     c->feedback_prev_vin=s->vin;c->feedback_prev_vout=s->vout;
     c->feedback_prev_ipv=s->ipv;c->feedback_prev_duty=duty;
     /* Existing 1 ms voltage-response allowance covers the 323 us voltage RC;
      * add a complete control interval for sequential ADC/command phase skew.
      * With 601 us control this evaluates after 3 intervals (1.803 ms). */
     if(c->feedback_window_us<cfg->RAMP_VOUT_LATENCY_US+C07_LOOP_US)return NULL;
-    c07_real_t elapsed=(c07_real_t)c->feedback_window_us*1e-6;
+    c07_real_t elapsed=c->feedback_window_us==3*C07_LOOP_US
+        ?(c07_real_t)(3*C07_LOOP_US)*1e-6:(c07_real_t)c->feedback_window_us*1e-6;
     c07_real_t voltage_uncertainty=2*vin_error;
     bool input_witness=s->vin<c->feedback_start_vin-voltage_uncertainty
         &&c->feedback_input_charge>c->feedback_dcm_charge
@@ -121,13 +140,15 @@ static const char *feedback_fault(c07_charger *c,const c07_sample *s,
     bool drive_witness=c->feedback_volt_seconds>
         cfg->RAMP_L_MAX_H*(2*p->current_error_a+c->feedback_max_ripple);
     if(input_witness||drive_witness)return "CURRENT_FEEDBACK_RESPONSE";
-    if(duty>0)feedback_start(c,s,duty);
-    else c->feedback_window_valid=false;
+    /* Keep the same mature observation length and evaluate on every frame.
+     * Known OFF may complete the existing window; it cannot start another. */
+    if(duty<=0)c->feedback_window_valid=false;
     return NULL;
 }
 static void input_feedback_start(c07_charger *c,const c07_sample *s,
                                  c07_real_t duty) {
     c->input_feedback_window_valid=true;c->input_feedback_window_us=0;
+    c->input_feedback_interval_count=0;c->input_feedback_interval_next=0;
     c->input_feedback_start_vin=c->input_feedback_prev_vin=s->vin;
     c->input_feedback_prev_vout=s->vout;c->input_feedback_prev_ipv=s->ipv;
     c->input_feedback_prev_il=s->il;c->input_feedback_prev_duty=duty;
@@ -167,16 +188,29 @@ static const char *input_feedback_fault(c07_charger *c,const c07_sample *s,
      * filter history remain commissioning/model limitations. */
     c07_real_t il_upper=larger(0,larger(s->il,c->input_feedback_prev_il))
                        +2*p->current_error_a+ripple;
-    c->input_feedback_charge+=.5*(larger(0,s->ipv)
-                                  +larger(0,c->input_feedback_prev_ipv))*seconds;
-    c->input_feedback_upper_charge+=d_hi*il_upper*seconds;
-    c->input_feedback_window_us+=dt;
+    c07_input_feedback_interval *part=&c->input_feedback_intervals[c->input_feedback_interval_next];
+    part->start_vin=c->input_feedback_prev_vin;part->dt_us=dt;
+    part->input_charge=smaller(larger(0,s->ipv),larger(0,c->input_feedback_prev_ipv))*seconds;
+    part->upper_charge=d_hi*il_upper*seconds;
+    if(++c->input_feedback_interval_next==3)c->input_feedback_interval_next=0;
+    if(c->input_feedback_interval_count<3)c->input_feedback_interval_count++;
+    const c07_input_feedback_interval *a=&c->input_feedback_intervals[0];
+    c->input_feedback_charge=a->input_charge;c->input_feedback_upper_charge=a->upper_charge;
+    c->input_feedback_window_us=a->dt_us;
+    for(unsigned n=1;n<c->input_feedback_interval_count;n++){
+        const c07_input_feedback_interval *b=&c->input_feedback_intervals[n];
+        c->input_feedback_charge+=b->input_charge;c->input_feedback_upper_charge+=b->upper_charge;
+        c->input_feedback_window_us+=b->dt_us;
+    }
+    unsigned oldest=c->input_feedback_interval_count==3?c->input_feedback_interval_next:0;
+    c->input_feedback_start_vin=c->input_feedback_intervals[oldest].start_vin;
     c->input_feedback_prev_vin=s->vin;c->input_feedback_prev_vout=s->vout;
     c->input_feedback_prev_ipv=s->ipv;c->input_feedback_prev_il=s->il;
     c->input_feedback_prev_duty=duty;
     if(c->input_feedback_window_us<c->regulator.cfg.RAMP_VOUT_LATENCY_US+C07_LOOP_US)
         return NULL;
-    c07_real_t elapsed=(c07_real_t)c->input_feedback_window_us*1e-6;
+    c07_real_t elapsed=c->input_feedback_window_us==3*C07_LOOP_US
+        ?(c07_real_t)(3*C07_LOOP_US)*1e-6:(c07_real_t)c->input_feedback_window_us*1e-6;
     /* Falling VIN excludes the model's ordinary Cin charging explanation.
      * Preserve two current-error allowances and both input divider loads.
      * This identifies measurement/path inconsistency, not a specific sensor
@@ -185,8 +219,7 @@ static const char *input_feedback_fault(c07_charger *c,const c07_sample *s,
         &&c->input_feedback_charge>c->input_feedback_upper_charge
           +(2*p->current_error_a+vin_hi*(2.0/153300.0))*elapsed;
     if(inconsistent)return "CURRENT_FEEDBACK_INCONSISTENCY";
-    if(duty>0)input_feedback_start(c,s,duty);
-    else c->input_feedback_window_valid=false;
+    if(duty<=0)c->input_feedback_window_valid=false;
     return NULL;
 }
 int c07_charger_init(c07_charger *c, const c07_config *config) {
