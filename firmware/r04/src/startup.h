@@ -23,7 +23,7 @@ typedef struct {
 
 typedef enum { C07_IDLE, C07_CLEAR, C07_PV_CONNECT, C07_BIAS,
     C07_RAMP_OUTPUT, C07_CONNECT_BATTERY, C07_CHARGING, C07_STOPPING,
-    C07_FAULT, C07_WAIT_INPUT } c07_state;
+    C07_FAULT, C07_WAIT_INPUT, C07_CHARGE_HOLD } c07_state;
 
 typedef struct {
     c07_state state;
@@ -32,6 +32,17 @@ typedef struct {
     bool previous_valid, stable_valid, rearm_started, rearm_finished;
     bool reset_was_requested, stop_battery_enabled;
     c07_real_t open_voltage;
+    /* Feedback-response diagnostic, independent of the current PI integrator.
+     * Uses confirmed previous PWM and independent input-current observations;
+     * it does not equate one phase sample of IL with its cycle average. */
+    bool feedback_window_valid;
+    uint32_t feedback_window_us;
+    c07_real_t feedback_start_vin, feedback_prev_vin, feedback_prev_vout;
+    c07_real_t feedback_prev_ipv, feedback_prev_duty;
+    c07_real_t feedback_input_charge, feedback_dcm_charge, feedback_volt_seconds;
+    c07_real_t feedback_max_ripple;
+    c07_real_t feedback_ripple_per_v_duty; /* immutable 1/(fsw*Lmin), init-owned */
+    c07_real_t feedback_diode_loss_v; /* immutable Vf + modeled Buck loss */
     c07_controller regulator;
     c07_command command;
 } c07_charger;

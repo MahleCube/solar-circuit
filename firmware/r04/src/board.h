@@ -13,6 +13,7 @@ typedef struct {
     bool initialized, pwm_enabled, bias_enabled, pv_enabled, battery_enabled;
     c07_rearm rearm;
     uint64_t completed_frames, pwm_accepted, pwm_rejected;
+    uint64_t last_plan_submitted_us;
     c07_inputs inputs; /* pwm_events retains stop causes throughout this frame */
     uint16_t raw[8];
 } c07_board;

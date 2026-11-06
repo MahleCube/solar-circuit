@@ -37,7 +37,7 @@ static void mppt_reset(c07_controller *s,c07_real_t voc,c07_real_t minimum){
     memset(m,0,sizeof(*m)); m->maximum=c->MPPT_REFERENCE_MAX_V;
     c07_real_t initial_max=hi(minimum,lo(m->maximum,voc-c->MPPT_VOC_MARGIN_V));
     m->target=clamp(voc*c->MPPT_INITIAL_FRACTION,minimum,initial_max);
-    m->direction=1;m->probe_direction=1;m->step_v=c->MPPT_STEP_MIN_V;
+    m->direction=-1;m->probe_direction=-1;m->step_v=c->MPPT_STEP_MIN_V;
 }
 static void mppt_update_legacy(c07_controller *s,c07_real_t voltage,c07_real_t power,
                         c07_real_t minimum,uint32_t dt_us,bool limited,bool settled){
@@ -72,9 +72,9 @@ static void mppt_update_legacy(c07_controller *s,c07_real_t voltage,c07_real_t p
     m->updates++;m->elapsed_us=0;clear_window(m);
 }
 
-/* Selection experiment: both methods receive exactly the same settled raw V/I
- * windows, and compare mean(V)*mean(I). This is intentionally distinct from
- * the preserved legacy mean(VI) path. No model MPP is supplied to either one. */
+/* The selectable methods use paired raw V/I window averages, distinct from
+ * the legacy mean(VI) path. IncCond uses three time-bracketed windows below;
+ * P&O compares consecutive windows. Neither receives a model MPP. */
 static c07_real_t selection_step(const c07_config *c,c07_real_t dp,c07_real_t dv,
                                  c07_real_t current,c07_real_t prior_power){
     if(c->MPPT_STEP_MODE==0)return c->MPPT_STEP_MIN_V;
@@ -95,8 +95,9 @@ static int inccond_direction(const c07_config *c,c07_real_t voltage,c07_real_t c
      * deliberately not hidden by replacing current-point terms by midpoints. */
     *signal=current*dv+voltage*di;
     if(absr(dv)<=c->MPPT_VOLTAGE_DEADBAND_V){
-        if(di>c->MPPT_CURRENT_DEADBAND_A)return 1;
-        if(di < -c->MPPT_CURRENT_DEADBAND_A)return -1;
+        /* Current changing at indistinguishable voltage is not evidence
+         * of a spatial I-V slope. Re-probe locally instead of following
+         * irradiance/quantisation as an MPPT direction. */
         return 0;
     }
     if(absr(*signal)<=c->POWER_DEADBAND_W)return 0;
@@ -105,74 +106,81 @@ static int inccond_direction(const c07_config *c,c07_real_t voltage,c07_real_t c
 static void selection_anchor(c07_mppt *m,c07_real_t v,c07_real_t i,c07_real_t p){
     m->previous_voltage=v;m->previous_current=i;m->previous_power=p;m->have_previous_power=true;
 }
-static c07_real_t inccond_target(const c07_config *c,c07_mppt *m,c07_real_t minimum,
-                                c07_real_t v,c07_real_t i,c07_real_t p,int direction){
+static void inccond_bracket(const c07_config *c,c07_mppt *m,c07_real_t minimum,
+                           c07_real_t v,c07_real_t i,uint64_t sample_us){
     c07_real_t old=m->target;
-    if(m->probe_active){
-        /* A probe never licenses continued movement with an unknown sign.
-         * Restore its centre on an unresolved result. Only IncCond may choose
-         * a new direction; also bound the return/commit command's voltage jump. */
-        c07_real_t target=m->probe_center_v;
-        if(direction){
-            m->direction=direction;
-            target+=R(direction)*m->step_v;
-            selection_anchor(m,v,i,p);
+    if(m->probe_active==0){
+        selection_anchor(m,v,i,v*i);m->previous_sample_us=sample_us;
+        m->probe_center_v=old;
+        /* At low current a 0.5V perturbation may not cross one ADC current
+         * code. Reuse the configured comparison resolution to choose a
+         * bounded local excitation; this is not a global voltage sweep. */
+        c07_real_t resolution=c->POWER_DEADBAND_W+absr(v)*c->MPPT_CURRENT_DEADBAND_A;
+        c07_real_t width=clamp(resolution/hi(absr(i),c->MPPT_SLOPE_CURRENT_FLOOR_A),
+                              lo(c->MPPT_STEP_MAX_V,c->MPPT_PROBE_MAX_V),c->MPPT_PROBE_MAX_V);
+        int side=m->probe_direction<0?-1:1;
+        c07_real_t b=clamp(old+R(side)*width,minimum,m->maximum);
+        c07_real_t other=clamp(old-R(side)*width,minimum,m->maximum);
+        if(absr(b-old)<absr(other-old)){b=other;side=-side;}
+        m->probe_excitation_v=absr(b-old);
+        m->probe_direction=-side;m->target=b;m->probe_active=1;m->reprobes++;
+    } else if(m->probe_active==1){
+        m->middle_voltage=v;m->middle_current=i;m->middle_sample_us=sample_us;
+        m->target=clamp(m->probe_center_v,minimum,m->maximum);m->probe_active=2;
+    } else {
+        int direction=0;
+        if(m->previous_sample_us<m->middle_sample_us&&m->middle_sample_us<sample_us){
+            c07_real_t w=R(m->middle_sample_us-m->previous_sample_us)/R(sample_us-m->previous_sample_us);
+            c07_real_t va=m->previous_voltage+w*(v-m->previous_voltage);
+            c07_real_t ia=m->previous_current+w*(i-m->previous_current);
+            c07_real_t dv=m->middle_voltage-va,di=m->middle_current-ia;
+            c07_real_t dp=m->middle_voltage*m->middle_current-va*ia;
+            direction=inccond_direction(c,m->middle_voltage,m->middle_current,dv,di,&m->last_signal);
+            m->step_v=selection_step(c,dp,dv,m->middle_current,va*ia);
+            /* Unresolved low-current contrast with incomplete measured
+             * voltage travel is not evidence that the MPP was reached.
+             * Reacquire a finite longer OUTER window; the PI keeps running. */
+            bool unresolved=absr(di)<c->MPPT_CURRENT_DEADBAND_A
+                &&absr(m->last_signal)<=c->POWER_DEADBAND_W;
+            if(!unresolved)m->probe_observation_us=0;
+            else if(!m->fast_probe&&absr(dv)+c->MPPT_SETTLE_V<m->probe_excitation_v){
+                uint32_t base=add_time(c->MPPT_SETTLE_US,c->MPPT_WINDOW_US);
+                if(m->probe_observation_us>base)base=m->probe_observation_us;
+                c07_real_t wanted=absr(di)>R(0)
+                    ?R(base)*c->MPPT_CURRENT_DEADBAND_A/absr(di):R(c->MPPT_MAX_HOLD_US);
+                wanted=lo(R(c->MPPT_MAX_HOLD_US),hi(R(add_time(base,c->CONTROL_PERIOD_US)),wanted));
+                m->probe_observation_us=(uint32_t)wanted;
+            }
+            if(absr(dv)>c->MPPT_VOLTAGE_DEADBAND_V){
+                m->local_conductance=di/dv;m->gradient_valid=true;
+            }
         }
-        m->probe_active=0;m->unresolved_us=0;
-        return clamp(clamp(target,minimum,m->maximum),
-                     hi(minimum,old-c->MPPT_PROBE_MAX_V),lo(m->maximum,old+c->MPPT_PROBE_MAX_V));
+        m->target=clamp(m->probe_center_v+R(direction)*m->step_v,minimum,m->maximum);
+        if(direction)m->direction=direction;
+        m->probe_active=0;m->have_previous_power=false;m->updates++;
     }
-    if(direction){
-        m->direction=direction;m->unresolved_us=0;
-        selection_anchor(m,v,i,p);
-        return clamp(old+R(direction)*m->step_v,minimum,m->maximum);
-    }
-    m->unresolved_us=add_time(m->unresolved_us,
-                             m->elapsed_us>m->window_us?m->elapsed_us:m->window_us);
-    if(m->unresolved_us<c->MPPT_MAX_HOLD_US)return old;
-    /* Configured comparison resolution sets an excitation scale; this is
-     * not a claim that averaging removes ADC quantisation or sensor noise. */
-    c07_real_t resolution=c->POWER_DEADBAND_W+absr(v)*c->MPPT_CURRENT_DEADBAND_A;
-    c07_real_t width=clamp(hi(R(2)*c->MPPT_VOLTAGE_DEADBAND_V,
-                            resolution/hi(absr(i),c->MPPT_SLOPE_CURRENT_FLOOR_A)),
-                          c->MPPT_STEP_MIN_V,c->MPPT_PROBE_MAX_V);
-    int side=m->probe_direction<0?-1:1;
-    c07_real_t target=clamp(old+R(side)*width,minimum,m->maximum);
-    c07_real_t other=clamp(old-R(side)*width,minimum,m->maximum);
-    if(absr(target-old)<absr(other-old)){target=other;side=-side;}
-    m->unresolved_us=0;m->probe_direction=-side;
-    if(absr(target-old)<=c->MPPT_VOLTAGE_DEADBAND_V)return old;
-    m->probe_center_v=old;m->probe_active=1;m->reprobes=add_time(m->reprobes,1);
-    selection_anchor(m,v,i,p);
-    return target;
+    if(m->target!=old)m->moves++;else m->holds++;
+    m->elapsed_us=0;clear_window(m);
 }
-static void selection_decide(const c07_config *c,c07_mppt *m,c07_real_t minimum){
+static void selection_decide(const c07_config *c,c07_mppt *m,c07_real_t minimum,uint64_t sample_us){
     c07_real_t v=m->voltage_sum/R(m->window_us),i=m->current_sum/R(m->window_us),p=v*i;
     m->last_mean_voltage=v;m->last_mean_current=i;m->last_mean_power=p;
     #if C07_SELECTION_DIAGNOSTICS
     m->last_mean_instant_power=m->power_sum/R(m->window_us);
 #endif
     m->last_signal=R(0);
+    if(c->MPPT_METHOD==2){inccond_bracket(c,m,minimum,v,i,sample_us);return;}
     int direction=m->direction;
     if(!m->have_previous_power){m->step_v=c->MPPT_STEP_MIN_V;selection_anchor(m,v,i,p);}
     else {
-        c07_real_t dp=p-m->previous_power,dv=v-m->previous_voltage,di=i-m->previous_current;
+        c07_real_t dp=p-m->previous_power,dv=v-m->previous_voltage;
         m->step_v=selection_step(c,dp,dv,i,m->previous_power);
-        if(c->MPPT_METHOD==1){
-            m->last_signal=dp;
-            if(dp < -c->POWER_DEADBAND_W)direction=-direction;
-            /* Continuing perturbations retain the reference power until
-             * accumulated change becomes significant. */
-            if(absr(dp)>c->POWER_DEADBAND_W)selection_anchor(m,v,i,p);
-        } else {
-            direction=inccond_direction(c,v,i,dv,di,&m->last_signal);
-            /* The anchor is retained through a finite unresolved hold. A
-             * bounded local probe then supplies a new voltage separation. */
-        }
+        m->last_signal=dp;
+        if(dp < -c->POWER_DEADBAND_W)direction=-direction;
+        if(absr(dp)>c->POWER_DEADBAND_W)selection_anchor(m,v,i,p);
     }
     c07_real_t old=m->target;
-    if(c->MPPT_METHOD==2)m->target=inccond_target(c,m,minimum,v,i,p,direction);
-    else if(direction!=0){m->direction=direction;m->target=clamp(old+R(direction)*m->step_v,minimum,m->maximum);}
+    if(direction!=0){m->direction=direction;m->target=clamp(old+R(direction)*m->step_v,minimum,m->maximum);}
     if(m->target!=old)m->moves++;else m->holds++;
     if(m->target<=minimum){m->direction=1;selection_anchor(m,v,i,p);}
     else if(m->target>=m->maximum){m->direction=-1;selection_anchor(m,v,i,p);}
@@ -184,8 +192,10 @@ void c07_mppt_invalidate(c07_controller *s,bool clear_anchor){
     s->async.pending=false;
     clear_window(&s->mppt);
     if(clear_anchor){
+        if(s->mppt.probe_active)s->mppt.target=s->mppt.probe_center_v;
         s->mppt.have_previous_power=false;s->mppt.probe_active=0;
-        s->mppt.unresolved_us=0;s->mppt.probe_center_v=R(0);s->mppt.probe_direction=1;
+        s->mppt.unresolved_us=0;s->mppt.probe_center_v=R(0);s->mppt.probe_direction=-1;
+        s->mppt.gradient_valid=false;
     }
 }
 bool c07_mppt_begin(c07_controller *s,c07_mppt_job *job){
@@ -202,11 +212,13 @@ bool c07_mppt_compute(const c07_config *c,const c07_mppt_job *job,c07_mppt_resul
     if(!c||!job||!result)return false;
     result->job=*job;result->valid=false;
     if(!job->state.window_us)return false;
-    selection_decide(c,&result->job.state,job->minimum);
+    selection_decide(c,&result->job.state,job->minimum,
+                     job->captured_us-job->state.window_us/2u);
     c07_mppt *m=&result->job.state;
     result->valid=isfinite(m->target)&&isfinite(m->step_v)&&isfinite(m->previous_power)
         &&isfinite(m->previous_voltage)&&isfinite(m->previous_current)&&isfinite(m->last_signal)
-        &&isfinite(m->probe_center_v)&&m->probe_active<=1;
+        &&isfinite(m->probe_center_v)&&isfinite(m->middle_voltage)&&isfinite(m->middle_current)
+        &&(!m->gradient_valid||isfinite(m->local_conductance))&&m->probe_active<=2;
     return result->valid;
 }
 void c07_mppt_publish(c07_controller *s,const c07_mppt_result *result){
@@ -227,9 +239,38 @@ static void mppt_update_selection(c07_controller *s,c07_real_t voltage,c07_real_
     if(minimum>m->maximum)limited=true;
     c07_real_t bounded=clamp(m->target,minimum,hi(minimum,m->maximum));
     if(bounded!=m->target){c07_mppt_invalidate(s,true);m->target=bounded;m->elapsed_us=0;}
-    if(limited){c07_mppt_invalidate(s,true);m->elapsed_us=0;return;}
+    if(limited){c07_mppt_invalidate(s,true);m->elapsed_us=0;s->mppt_raw_valid=false;return;}
+    /* Reject a discontinuity inconsistent with the most recent local I-V
+     * slope. A smooth irradiance drift is handled by A-B-A interpolation;
+     * an abrupt step must not be interpreted as that linear drift. This
+     * only restarts the local comparison; current/PWM control continues. */
+    bool jump=false;
+    if(c->MPPT_METHOD==2&&s->mppt_raw_valid&&m->gradient_valid){
+        c07_real_t innovation=current-s->mppt_previous_raw_i-
+                               m->local_conductance*(voltage-s->mppt_previous_raw_v);
+        c07_real_t bound=hi(R(4)*c->MPPT_CURRENT_DEADBAND_A,
+            c->MPPT_JUMP_CURRENT_FRACTION*hi(absr(current),absr(s->mppt_previous_raw_i)));
+        jump=absr(innovation)>bound;
+    }
+    s->mppt_previous_raw_v=voltage;s->mppt_previous_raw_i=current;s->mppt_raw_valid=true;
+    if(jump){
+        s->mppt_discontinuities++;s->mppt_fast_until_us=a->clock_us+c->MPPT_MAX_HOLD_US;
+        /* The comparison crossed a discontinuity; its samples are invalid.
+         * Keep the last accepted local slope for monitoring the NEXT step,
+         * even when steps arrive faster than a new A-B-A can complete. */
+        c07_real_t accepted_conductance=m->local_conductance;
+        c07_mppt_invalidate(s,true);
+        m->local_conductance=accepted_conductance;m->gradient_valid=true;
+        m->elapsed_us=0;return;
+    }
+    if(c->MPPT_METHOD==2&&!m->probe_active&&!m->elapsed_us)
+        m->fast_probe=a->clock_us<s->mppt_fast_until_us;
     m->elapsed_us=add_time(m->elapsed_us,dt_us);
-    if(!settled){c07_mppt_invalidate(s,false);return;}
+    /* Bounded timed windows replace an indefinitely repeated settle test.
+     * Normal probes include post-command blanking; abrupt-change recovery
+     * uses faster continuous windows of actual V/I, without blanking.
+     * Actual limit/epoch changes still invalidate outstanding work. */
+    (void)settled;
     /* Result is consumed only at fast-end, after this frame's PI and limits.
      * Main cannot run while this IRQ checks/copies the committed result. */
     uint32_t ready=atomic_load_explicit(&a->result_seq,memory_order_acquire);
@@ -253,10 +294,21 @@ static void mppt_update_selection(c07_controller *s,c07_real_t voltage,c07_real_
         a->expired++;c07_mppt_invalidate(s,true);m->elapsed_us=0;return;
     }
     m->settled_us=add_time(m->settled_us,dt_us);
-    if(m->settled_us<c->MPPT_SETTLE_US)return;
+    if((c->MPPT_METHOD!=2||!m->fast_probe)&&m->settled_us<c->MPPT_SETTLE_US)return;
     m->voltage_sum+=voltage*R(dt_us);m->current_sum+=current*R(dt_us);
     m->window_us=add_time(m->window_us,dt_us);
-    if(m->elapsed_us<c->MPPT_PERIOD_US||m->window_us<c->MPPT_WINDOW_US)return;
+    /* The complete three-point decision takes at least MPPT_PERIOD_US.
+     * Ipv is upstream of Cin, so use actual paired PV V/I during the local
+     * voltage transient rather than pretending the command was achieved. */
+    uint32_t period=c->MPPT_PERIOD_US;
+    if(c->MPPT_METHOD==2){
+        if(m->fast_probe)period=(c->MPPT_PERIOD_US+2u)/3u;
+        else {
+            if(m->probe_active)period=add_time(c->MPPT_SETTLE_US,c->MPPT_WINDOW_US);
+            if(m->probe_observation_us>period)period=m->probe_observation_us;
+        }
+    }
+    if(m->elapsed_us<period||m->window_us<c->MPPT_WINDOW_US)return;
     uint32_t id=a->next_request+2u;if(!id)id=2u;a->next_request=id;
     atomic_store_explicit(&a->request_seq,id-1u,memory_order_relaxed);
     atomic_thread_fence(memory_order_release);
@@ -282,6 +334,7 @@ static bool valid_config(const c07_config *c){
     return c->MPPT_METHOD<=2 && c->MPPT_STEP_MODE<=2
       && c->MPPT_VOLTAGE_DEADBAND_V>=R(0) && c->MPPT_CURRENT_DEADBAND_A>=R(0)
       && c->MPPT_SLOPE_CURRENT_FLOOR_A>R(0)
+      && c->MPPT_JUMP_CURRENT_FRACTION>R(0)&&c->MPPT_JUMP_CURRENT_FRACTION<R(1)
       && c->POWER_DEADBAND_W>=R(0) && c->MPPT_STEP_GAIN_V>=R(0)
       && c->MPPT_MAX_HOLD_US>0 && c->MPPT_PROBE_MAX_V>=c->MPPT_STEP_MIN_V
       && c->MPPT_PROBE_MAX_V>c->MPPT_VOLTAGE_DEADBAND_V
@@ -297,6 +350,7 @@ static bool valid_config(const c07_config *c){
       && c->RAMP_CURRENT_A>R(0) && c->RAMP_COUT_MIN_F>R(0)
       && c->RAMP_MIN_TARGET_V>=R(0) && c->RAMP_MIN_TARGET_V<c->CHARGE_VOLTAGE_V
       && c->RAMP_L_MIN_H>R(0) && c->RAMP_L_MAX_H>=c->RAMP_L_MIN_H
+      && c->BUCK_L_H>=c->RAMP_L_MIN_H && c->BUCK_L_H<=c->RAMP_L_MAX_H
       && c->RAMP_DIODE_VF_V>R(0) && c->RAMP_VOLTAGE_ERROR_V>=R(0)
       && c->RAMP_VOUT_LATENCY_US>0 && c->RAMP_PACKET_US>0
       && c->RAMP_PWM_PERIOD_US>0 && c->RAMP_PWM_PERIOD_US<=c->RAMP_PACKET_US
@@ -311,6 +365,7 @@ int c07_init(c07_controller *s,const c07_config *c){
     if(!valid_config(c))return C07_ERR_CONFIG;
     atomic_init(&s->async.request_seq,0);atomic_init(&s->async.result_seq,0);
     s->cfg=*c;
+    s->pulse_area_factor=R(c->RAMP_PWM_PERIOD_US)/(R(2000000)*c->BUCK_L_H);
     s->pv_pi.kp=c->PV_KP_A_PER_V;s->pv_pi.ki=c->PV_KI_A_PER_V_S;
     s->current_pi.kp=c->IL_KP_DUTY_PER_A;s->current_pi.ki=c->IL_KI_DUTY_PER_A_S;
     s->cv_pi.kp=c->CV_KP_A_PER_V;s->cv_pi.ki=c->CV_KI_A_PER_V_S;
@@ -320,11 +375,14 @@ void c07_reset(c07_controller *s){
     if(!s)return;
     c07_mppt_invalidate(s,true);
     s->duty=R(0);s->ramp_applied_duty=R(0);s->current_target=R(0);s->initialized=false;s->tracking_started=false;
-    s->current=R(0);s->output_voltage=R(0);s->pv_voltage=R(0);s->power=R(0);
+    s->current=R(0);s->current_feedback=R(0);s->dcm_current_floor=R(0);
+    s->mppt_raw_valid=false;s->mppt_discontinuities=0;s->mppt_fast_until_us=0;
+    s->output_voltage=R(0);s->pv_voltage=R(0);s->power=R(0);
     s->pv_previous=R(0);s->pv_derivative=R(0);
     s->outer_elapsed_us=0;s->cv_ceiling=s->cfg.CHARGE_CURRENT_A;
     s->limited=true;s->limit_reason=C07_LIMIT_STOPPED;
     s->reacquire_elapsed_us=0;s->reacquisitions=0;s->restart_feedforward_pending=false;s->off_current_hold=false;
+    s->reacquire_il_sum=R(0);s->reacquire_ipv_sum=R(0);
     pi_track(&s->pv_pi,R(0),R(0),R(0));pi_track(&s->current_pi,R(0),R(0),R(0));
     pi_track(&s->cv_pi,s->cfg.CHARGE_CURRENT_A,R(0),R(0));mppt_reset(s,R(0),R(0));
 }
@@ -393,12 +451,38 @@ static c07_real_t ramp(c07_controller *s,const c07_sample *i,uint32_t us){
         ||s->duty<c->DUTY_MIN)?R(0):s->duty;
     return s->ramp_applied_duty;
 }
+/* Triangle-area feedforward in DCM, Vo/Vin in CCM. The nominal C07 L is
+ * a controller parameter, not a replacement for raw-current protection.
+ * At the selected feedforward crossover the expressions agree continuously. */
+static c07_real_t current_feedforward(c07_real_t ff,c07_real_t area,c07_real_t target){
+    if(area<=R(0))return ff;
+    if(target<=R(0))return R(0);
+    if(target>=area*ff*ff)return ff;
+    return _Generic((c07_real_t)0,float:sqrtf,default:sqrt)(target/area);
+}
 static c07_real_t charge(c07_controller *s,const c07_sample *i,uint32_t us){
     const c07_config *c=&s->cfg;
     c07_real_t dt=R(us)/R(1000000);
     c07_real_t minimum=hi(i->vbat+c->PV_HEADROOM_V,
                          (hi(i->vout,i->vbat)+c->BUCK_LOSS_MARGIN_V)/c->DUTY_MAX);
-    c07_real_t ff=clamp(i->vout/hi(i->vin,R(1)),R(0),c->DUTY_MAX);
+    c07_real_t ff_ccm=clamp(i->vout/hi(i->vin,R(1)),R(0),c->DUTY_MAX),area=R(0);
+    /* One shared pulse-area coefficient for both observation and FF.
+     * Confirmed OFF may use FF; unknown metadata may not. */
+    if(!i->applied_synchronous&&(i->applied_pwm_valid||i->applied_pwm_known_off)
+       &&i->vin>i->vout&&i->vout>=R(0))
+        area=(i->vin-i->vout)*(i->vin+c->RAMP_DIODE_VF_V)*s->pulse_area_factor/
+                                       (i->vout+c->RAMP_DIODE_VF_V);
+    /* A late ADC sample in diode-emulation can read zero despite positive
+     * pulse charge. Use a model floor only for an actually applied DCM plan;
+     * larger sensed current always wins. Sensor diagnostics retain raw il. */
+    s->dcm_current_floor=R(0);s->current_feedback=s->current;
+    if(i->applied_pwm_valid&&area>R(0)&&i->applied_duty>R(0)&&i->applied_duty<ff_ccm){
+        s->dcm_current_floor=area*i->applied_duty*i->applied_duty;
+        s->current_feedback=hi(s->current,s->dcm_current_floor);
+    }
+    c07_real_t ff=R(0);
+    bool first_frame=!s->tracking_started;
+    c07_real_t initial_target=R(0);
     c07_real_t ev=s->pv_voltage-s->mppt.target, ecv=c->CHARGE_VOLTAGE_V-hi(i->vbat,s->output_voltage);
     /* Measurement derivative: positive dV/dt asks for more current in a Buck
      * input-voltage loop. No reference derivative or setpoint kick.
@@ -408,18 +492,22 @@ static c07_real_t charge(c07_controller *s,const c07_sample *i,uint32_t us){
     c07_real_t pv_d=c->PV_KD_A_S_PER_V*s->pv_derivative
       +c->PV_KP_A_PER_V*(R(1)-c->PV_REFERENCE_WEIGHT)*s->mppt.target;
     if(!s->tracking_started){
-        s->current_target=clamp(s->current,R(0),c->CHARGE_CURRENT_A);
+        s->current_target=clamp(s->current_feedback,R(0),c->CHARGE_CURRENT_A);
+        initial_target=s->current_target;
+        ff=current_feedforward(ff_ccm,area,s->current_target);
         pi_track(&s->pv_pi,s->current_target,ev,pv_d);
         if(s->duty<c->DUTY_MIN){
             /* A cold OFF handover has no learned operating-point bias. */
             pi_track(&s->current_pi,R(0),R(0),R(0));s->off_current_hold=true;
-        } else pi_track(&s->current_pi,s->duty,s->current_target-s->current,ff);
+        } else pi_track(&s->current_pi,s->duty,s->current_target-s->current_feedback,ff);
         /* Bumpless CV boundary at zero voltage error; positive error keeps
          * proportional current headroom while PV is the active selector. */
         s->cv_pi.integral=s->current_target;s->tracking_started=true;
     }
     s->outer_elapsed_us=add_time(s->outer_elapsed_us,us);s->limited=false;s->limit_reason=C07_LIMIT_MPPT;
+    c07_real_t prior_target=s->current_target;
     c07_real_t ceiling=c->CHARGE_CURRENT_A;
+    c07_limit ceiling_reason=C07_LIMIT_CURRENT;
     bool outer_step=s->outer_elapsed_us>=c->VOLTAGE_PERIOD_US;
     if(outer_step){
         c07_real_t odt=R(s->outer_elapsed_us)/R(1000000);s->outer_elapsed_us=0;
@@ -428,29 +516,29 @@ static c07_real_t charge(c07_controller *s,const c07_sample *i,uint32_t us){
         s->current_target=c->IL_RISE_A_PER_S>R(0)?lo(wanted,s->current_target+c->IL_RISE_A_PER_S*odt):wanted;
         pi_track(&s->pv_pi,s->current_target,ev,pv_d);
     }
-    ceiling=lo(ceiling,s->cv_ceiling);
-    if(s->cv_ceiling<c->CHARGE_CURRENT_A-c->CURRENT_DEADBAND_A &&
-       s->current_target>=s->cv_ceiling-R(1e-6)){s->limited=true;s->limit_reason=C07_LIMIT_CV;}
+    if(s->cv_ceiling<ceiling){ceiling=s->cv_ceiling;ceiling_reason=C07_LIMIT_CV;}
     /* 57.1 V is the CV regulation target, not the emergency OFF threshold.
      * The board supervisor independently latches the raw-voltage trip. */
-    if(hi(i->vbat,i->vout)>=c->VOUT_TRIP_V){ceiling=R(0);s->limited=true;s->limit_reason=C07_LIMIT_VOLTAGE;}
+    if(hi(i->vbat,i->vout)>=c->VOUT_TRIP_V){ceiling=R(0);ceiling_reason=C07_LIMIT_VOLTAGE;}
     if(i->ipv>=c->INPUT_CURRENT_LIMIT_A){
-        ceiling=lo(ceiling,hi(R(0),s->current_target-c->INPUT_LIMIT_REDUCTION_A_PER_S*dt));
-        s->limited=true;s->limit_reason=C07_LIMIT_INPUT_CURRENT;
+        c07_real_t cap=hi(R(0),prior_target-c->INPUT_LIMIT_REDUCTION_A_PER_S*dt);
+        if(cap<ceiling){ceiling=cap;ceiling_reason=C07_LIMIT_INPUT_CURRENT;}
     }
     c07_real_t margin=i->vin-i->vbat;
     if(margin<c->PV_HEADROOM_V+c->INPUT_FOLDBACK_BAND_V){
         c07_real_t fraction=clamp((margin-c->PV_HEADROOM_V)/c->INPUT_FOLDBACK_BAND_V,R(0),R(1));
-        c07_real_t cap=c->CHARGE_CURRENT_A*fraction;ceiling=lo(ceiling,cap);
-        if(s->current_target>=cap-c->CURRENT_DEADBAND_A){s->limited=true;s->limit_reason=C07_LIMIT_INPUT_FOLDBACK;}
+        c07_real_t cap=c->CHARGE_CURRENT_A*fraction;
+        if(cap<ceiling){ceiling=cap;ceiling_reason=C07_LIMIT_INPUT_FOLDBACK;}
     }
-    if(minimum>s->mppt.maximum){ceiling=R(0);s->limited=true;s->limit_reason=C07_LIMIT_BUCK_UNREACHABLE;}
+    if(minimum>s->mppt.maximum){ceiling=R(0);ceiling_reason=C07_LIMIT_BUCK_UNREACHABLE;}
     if(i->tsink>c->TSINK_DERATE_C){
         c07_real_t fraction=clamp((c->TSINK_MAX_C-i->tsink)/(c->TSINK_MAX_C-c->TSINK_DERATE_C),R(0),R(1));
-        c07_real_t cap=c->CHARGE_CURRENT_A*fraction;ceiling=lo(ceiling,cap);
-        if(s->current_target>=cap-c->CURRENT_DEADBAND_A){s->limited=true;s->limit_reason=C07_LIMIT_THERMAL;}
+        c07_real_t cap=c->CHARGE_CURRENT_A*fraction;
+        if(cap<ceiling){ceiling=cap;ceiling_reason=C07_LIMIT_THERMAL;}
     }
-    if(s->current_target>=c->CHARGE_CURRENT_A-c->CURRENT_DEADBAND_A){s->limited=true;s->limit_reason=C07_LIMIT_CURRENT;}
+    if(s->current_target>=ceiling-c->CURRENT_DEADBAND_A){
+        s->limited=true;s->limit_reason=ceiling_reason;
+    }
     bool reduced=s->current_target>ceiling;
     if(reduced){s->current_target=hi(R(0),ceiling);pi_track(&s->pv_pi,s->current_target,ev,pv_d);}
     /* Inactive CV tracks the selected current at zero CV error. This retains
@@ -462,7 +550,9 @@ static c07_real_t charge(c07_controller *s,const c07_sample *i,uint32_t us){
         if(s->current_target<s->cv_ceiling-R(1e-6))s->cv_pi.integral=s->current_target;
         else if(reduced)pi_track(&s->cv_pi,s->current_target,ecv,R(0));
     }
-    c07_real_t ei=s->current_target-s->current;
+    c07_real_t ei=s->current_target-s->current_feedback;
+    if(!first_frame||s->current_target!=initial_target)
+        ff=current_feedforward(ff_ccm,area,s->current_target);
     if(s->current_target<=c->ZERO_CURRENT_TARGET_A){
         /* OFF is outside the continuous control range: hold the learned
          * integral rather than forcing a -feedforward bias. In light-load
@@ -482,24 +572,41 @@ static c07_real_t charge(c07_controller *s,const c07_sample *i,uint32_t us){
         if(s->duty>R(0) && s->duty<c->DUTY_MIN){s->duty=R(0);s->limited=true;s->limit_reason=C07_LIMIT_MIN_DUTY;}
         else if(s->duty>=c->DUTY_MAX){
             s->limited=true;s->limit_reason=C07_LIMIT_MAX_DUTY;
-            pi_track(&s->pv_pi,lo(s->current_target,hi(R(0),s->current)),ev,pv_d);
+            pi_track(&s->pv_pi,lo(s->current_target,hi(R(0),s->current_feedback)),ev,pv_d);
         }
     }
     bool pair_ok=i->pv_pair_span_us>=0 && (uint32_t)i->pv_pair_span_us<=c->MPPT_MAX_PAIR_SPAN_US;
-    bool reacquire=pair_ok && s->duty==R(0) && s->current_target<=c->ZERO_CURRENT_TARGET_A
-      && absr(i->il)<c->MPPT_NOLOAD_A && absr(i->ipv)<c->MPPT_NOLOAD_A
-      && s->pv_voltage<s->mppt.target-c->MPPT_SETTLE_V && i->vin>minimum
+    /* Evaluate the sustained base target, not the temporary probe B.
+     * Tiny probe-induced pulses must not cancel an otherwise unloaded,
+     * unreachable-voltage observation window on every local comparison. */
+    c07_real_t base_target=s->mppt.probe_active?s->mppt.probe_center_v:s->mppt.target;
+    bool reacquire=pair_ok && s->pv_voltage<base_target-c->MPPT_SETTLE_V && i->vin>minimum
       && (s->limit_reason==C07_LIMIT_MPPT || s->limit_reason==C07_LIMIT_MIN_DUTY);
-    s->reacquire_elapsed_us=reacquire?add_time(s->reacquire_elapsed_us,us):0;
-    if(s->reacquire_elapsed_us>=c->MPPT_REACQUIRE_US){
+    if(reacquire){
+        s->reacquire_elapsed_us=add_time(s->reacquire_elapsed_us,us);
+        s->reacquire_il_sum+=absr(i->il)*R(us);
+        s->reacquire_ipv_sum+=absr(i->ipv)*R(us);
+    }else{
+        s->reacquire_elapsed_us=0;s->reacquire_il_sum=R(0);s->reacquire_ipv_sum=R(0);
+    }
+    bool no_extraction=s->reacquire_elapsed_us>=c->MPPT_REACQUIRE_US
+        &&s->reacquire_il_sum<c->MPPT_NOLOAD_A*R(s->reacquire_elapsed_us)
+        &&s->reacquire_ipv_sum<c->MPPT_NOLOAD_A*R(s->reacquire_elapsed_us);
+    if(no_extraction){
         c07_mppt_invalidate(s,true);
-        mppt_reset(s,i->vpv,minimum);ev=s->pv_voltage-s->mppt.target;
+        mppt_reset(s,i->vpv,minimum);
+        s->mppt.target=clamp(i->vpv-c->MPPT_STEP_MAX_V,minimum,s->mppt.maximum);
+        ev=s->pv_voltage-s->mppt.target;
         pv_d=c->PV_KD_A_S_PER_V*s->pv_derivative
           +c->PV_KP_A_PER_V*(R(1)-c->PV_REFERENCE_WEIGHT)*s->mppt.target;
         pi_track(&s->pv_pi,R(0),ev,pv_d);pi_track(&s->current_pi,R(0),R(0),R(0));
-        s->restart_feedforward_pending=true;s->reacquire_elapsed_us=0;s->reacquisitions++;
+        s->restart_feedforward_pending=true;s->reacquisitions++;
     }
-    bool settled=absr(ev)<=c->MPPT_SETTLE_V && absr(ei)<=c->MPPT_SETTLE_A;
+    if(s->reacquire_elapsed_us>=c->MPPT_REACQUIRE_US){
+        s->reacquire_elapsed_us=0;s->reacquire_il_sum=R(0);s->reacquire_ipv_sum=R(0);
+    }
+    /* A DCM point-current mismatch is not a voltage-window quality test. */
+    bool settled=absr(ev)<=c->MPPT_SETTLE_V;
     if(c->MPPT_METHOD==0)mppt_update_legacy(s,s->pv_voltage,s->power,minimum,us,s->limited||!pair_ok,settled);
     else mppt_update_selection(s,i->vpv,i->ipv,minimum,us,s->limited||!pair_ok,settled);
     return s->duty;
@@ -511,7 +618,8 @@ int c07_step(c07_controller *s,const c07_sample *i,uint32_t us,bool charging,c07
     if(!charging)c07_mppt_invalidate(s,true);
     if(!us||us>s->cfg.MAX_LOOP_GAP_US){c07_reset(s);return C07_ERR_DT;}
     if(!i->valid||!isfinite(i->il)||!isfinite(i->ipv)||!isfinite(i->vpv)||!isfinite(i->vin)
-       ||!isfinite(i->vout)||!isfinite(i->vbat)||!isfinite(i->tsink)){
+       ||!isfinite(i->vout)||!isfinite(i->vbat)||!isfinite(i->tsink)
+       ||(i->applied_pwm_valid&&(!isfinite(i->applied_duty)||i->applied_duty<R(0)||i->applied_duty>R(1)))){
         c07_reset(s);return C07_ERR_SAMPLE;
     }
     c07_real_t ai=s->initialized?R(us)/(R(s->cfg.IL_FILTER_US)+R(us)):R(1);

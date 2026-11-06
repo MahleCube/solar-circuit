@@ -20,7 +20,7 @@ typedef C07_REAL_TYPE c07_real_t;
  X(RAMP_CURRENT_A, .5) X(RAMP_MIN_TARGET_V, 44.5) \
  X(CURRENT_DEADBAND_A, .05) X(VOLTAGE_DEADBAND_V, .03) \
  X(RAMP_COUT_MIN_F, .000768) X(RAMP_L_MIN_H, .000150) X(RAMP_L_MAX_H, .000250) \
- X(RAMP_DIODE_VF_V, .8) X(RAMP_VOLTAGE_ERROR_V, .03) \
+ X(RAMP_DIODE_VF_V, .8) X(RAMP_VOLTAGE_ERROR_V, .03) X(BUCK_L_H, .000200) \
  X(DUTY_RISE_PER_S, .3) X(CURRENT_REDUCTION_PER_A_S, 3.) \
  X(VOLTAGE_REDUCTION_PER_V_S, 4.) X(POWER_DEADBAND_W, .2) \
  X(MPPT_INITIAL_FRACTION, .82) X(PV_KP_A_PER_V, .9) X(PV_KI_A_PER_V_S, 120.) \
@@ -37,7 +37,8 @@ typedef C07_REAL_TYPE c07_real_t;
  X(MPPT_REFERENCE_MAX_V, 80.) X(MPPT_NOLOAD_A, .1) \
  X(MPPT_VOLTAGE_DEADBAND_V, .02835360440340909) \
  X(MPPT_CURRENT_DEADBAND_A, .01220703125) \
- X(MPPT_SLOPE_CURRENT_FLOOR_A, .1) X(MPPT_PROBE_MAX_V, 1.)
+ X(MPPT_SLOPE_CURRENT_FLOOR_A, .1) X(MPPT_PROBE_MAX_V, 1.) \
+ X(MPPT_JUMP_CURRENT_FRACTION, .1)
 
 #define C07_CONFIG_TIME_FIELDS(X) \
  X(CONTROL_PERIOD_US, 1001) X(MAX_LOOP_GAP_US, 5000) \
@@ -63,6 +64,11 @@ typedef struct {
     c07_real_t vin, ipv, vout, il, tbat, tsink, vbat, vpv;
     bool valid;
     int32_t pv_pair_span_us; /* actual software transfer bounds, not ADC aperture */
+    /* Gate plan actually applied during acquisition; absent information does
+     * not authorize a DCM current estimate. Raw il/ipv remain unmodified. */
+    c07_real_t applied_duty;
+    bool applied_pwm_valid, applied_synchronous;
+    bool applied_pwm_known_off; /* confirmed both gates OFF, not absent metadata */
 } c07_sample;
 
 typedef enum {
@@ -86,11 +92,18 @@ typedef struct {
     uint32_t moves, holds;
     int direction;
     bool have_previous_power;
-    /* IncCond's unresolved derivative is not proof of MPP. A finite hold
-     * permits one local probe; an inconclusive probe returns to its centre. */
+    /* Local A-B-A bracket. 0: collect A, 1: collect B, 2: return to A.
+     * Raw measurements and times, not the command, define the slope. */
     c07_real_t probe_center_v;
     uint32_t unresolved_us, reprobes, probe_active;
     int probe_direction;
+    c07_real_t middle_voltage, middle_current;
+    uint64_t previous_sample_us, middle_sample_us;
+    c07_real_t local_conductance;
+    bool gradient_valid;
+    bool fast_probe;
+    c07_real_t probe_excitation_v;
+    uint32_t probe_observation_us;
 } c07_mppt;
 
 /* Single-core IRQ/main mailbox. Each payload is published by an aligned
@@ -124,10 +137,17 @@ typedef struct {
     c07_real_t duty, current_target, current, output_voltage, pv_voltage, power;
     c07_real_t cv_ceiling, pv_previous, pv_derivative;
     uint32_t outer_elapsed_us, reacquire_elapsed_us, reacquisitions;
+    c07_real_t reacquire_il_sum, reacquire_ipv_sum;
     bool initialized, tracking_started, limited, restart_feedforward_pending;
     bool off_current_hold;
     c07_limit limit_reason;
     c07_real_t ramp_applied_duty; /* previous startup output, excluding inhibited packets */
+    c07_real_t current_feedback, dcm_current_floor;
+    c07_real_t pulse_area_factor; /* T/(2L), immutable-config derived */
+    c07_real_t mppt_previous_raw_v, mppt_previous_raw_i;
+    bool mppt_raw_valid;
+    uint32_t mppt_discontinuities;
+    uint64_t mppt_fast_until_us;
 } c07_controller;
 
 void c07_config_defaults(c07_config *cfg);

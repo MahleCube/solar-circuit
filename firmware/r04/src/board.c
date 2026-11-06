@@ -83,6 +83,17 @@ const c07_inputs *c07_board_read(c07_board *b) {
     i->pwm_events=0;status(b,false);
     i->sample.pv_pair_span_us=-1;
     i->sample_us=time_us_64();
+    /* A successful one-word submission is consumed at the next 20 us
+     * boundary. Only identify it with this ADC frame after that whole bound
+     * plus one microsecond for integer-clock quantization;
+     * a requested duty or a command still awaiting the latch is not feedback.
+     * This confirms the PIO command, not a measurement of physical gate drive. */
+    i->sample.applied_pwm_valid=b->pwm_enabled&&b->pwm.enabled
+        &&b->pwm_accepted&&i->sample_us>=b->last_plan_submitted_us+1000000u/C07_PWM_HZ+1u;
+    i->sample.applied_pwm_known_off=!b->pwm_enabled&&!b->pwm.enabled;
+    i->sample.applied_duty=i->sample.applied_pwm_valid
+        ?(c07_real_t)b->last_plan.high_ticks/(c07_real_t)C07_PWM_TICKS:0;
+    i->sample.applied_synchronous=i->sample.applied_pwm_valid&&b->last_plan.synchronous;
     for(unsigned n=0;n<8;n++) { i->adc_start_us[n]=UINT32_MAX; i->adc_end_us[n]=UINT32_MAX; }
     for(unsigned n=0;n<8;n++) {
         unsigned channel=adc_order[n];
@@ -118,6 +129,10 @@ const c07_inputs *c07_board_read(c07_board *b) {
         }
     }
     status(b,true);
+    if(i->pwm_events||!i->bias_good||i->pv_fault||i->battery_fault||i->pv_stopped){
+        i->sample.applied_pwm_valid=false;
+        i->sample.applied_pwm_known_off=false;
+    }
     uint64_t completed=time_us_64();
     i->age_us=(uint32_t)(completed-i->sample_us);
     if (!i->error&&i->age_us>C07_MAX_SAMPLE_AGE_US) i->error="ADC_DEADLINE";
@@ -142,6 +157,7 @@ static const char *pwm_apply(c07_board *b, c07_real_t duty, uint64_t sample_us,b
         now+C07_PIO_LEASE_US+C07_PLAN_BUDGET_US);
     if(error){b->pwm_rejected++;return error;}
     b->pwm_enabled=true;b->last_plan=plan;b->pwm_accepted++;
+    b->last_plan_submitted_us=time_us_64();
     return NULL;
 }
 const char *c07_board_apply(c07_board *b, const c07_command *o) {
