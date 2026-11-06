@@ -14,7 +14,10 @@ static void clear_command(c07_command *c) {
 }
 static void enter(c07_charger *c, c07_state state, uint64_t now) {
     c->state=state; c->entered_us=now; c->stable_valid=false;
-    if (state!=C07_CHARGING) c->feedback_window_valid=false;
+    if (state!=C07_CHARGING) {
+        c->feedback_window_valid=false;
+        c->input_feedback_window_valid=false;
+    }
     if (state==C07_PV_CONNECT) { c->rearm_started=false; c->rearm_finished=false; }
 }
 static bool stable(c07_charger *c, bool condition, uint64_t now, uint32_t duration) {
@@ -122,6 +125,70 @@ static const char *feedback_fault(c07_charger *c,const c07_sample *s,
     else c->feedback_window_valid=false;
     return NULL;
 }
+static void input_feedback_start(c07_charger *c,const c07_sample *s,
+                                 c07_real_t duty) {
+    c->input_feedback_window_valid=true;c->input_feedback_window_us=0;
+    c->input_feedback_start_vin=c->input_feedback_prev_vin=s->vin;
+    c->input_feedback_prev_vout=s->vout;c->input_feedback_prev_ipv=s->ipv;
+    c->input_feedback_prev_il=s->il;c->input_feedback_prev_duty=duty;
+    c->input_feedback_charge=c->input_feedback_upper_charge=0;
+}
+static const char *input_feedback_fault(c07_charger *c,const c07_sample *s,
+                                        uint32_t dt) {
+    const c07_commutation_config *p=&c07_commissioning.commutation;
+    /* Keep the near-zero response and signed-drive test independent. A low
+     * current sample is valid in DCM; it resets only this nonzero window.
+     * Missing PWM confirmation must not be treated as an applied command. */
+    if(c->state!=C07_CHARGING||fabs(s->il)<=p->current_error_a
+       ||(!s->applied_pwm_valid&&!s->applied_pwm_known_off)) {
+        c->input_feedback_window_valid=false;return NULL;
+    }
+    c07_real_t duty=s->applied_pwm_valid?s->applied_duty:0;
+    if(!isfinite(duty)||duty<0||duty>C07_DUTY_MAX) {
+        c->input_feedback_window_valid=false;return NULL;
+    }
+    if(!c->input_feedback_window_valid) {
+        if(duty>0)input_feedback_start(c,s,duty);
+        return NULL;
+    }
+    const c07_real_t seconds=dt==C07_LOOP_US
+        ?(c07_real_t)C07_LOOP_US*1e-6:(c07_real_t)dt*1e-6;
+    const c07_real_t vin_error=p->vin_error_v+C07_VOLTAGE_LSB_V;
+    const c07_real_t vo_error=p->vout_error_v+C07_VOLTAGE_LSB_V;
+    c07_real_t vin_hi=larger(s->vin,c->input_feedback_prev_vin)+vin_error;
+    c07_real_t vo_lo=larger(0,smaller(s->vout,c->input_feedback_prev_vout)-vo_error);
+    c07_real_t d_hi=smaller(1,larger(duty,c->input_feedback_prev_duty)
+                           +p->hs_off_max_s*C07_PWM_HZ);
+    c07_real_t ripple=larger(0,vin_hi-vo_lo)*d_hi*c->feedback_ripple_per_v_duty;
+    /* Raw IL, not the nominal-L current-loop supplement. Add the FULL PWM
+     * ripple so a phase-sampled trough is not equated with a cycle average.
+     * This diagnostic uses the same voltage/current/delay envelope as the
+     * near-zero monitor; unmodeled inter-sample envelope peaks and analog
+     * filter history remain commissioning/model limitations. */
+    c07_real_t il_upper=larger(0,larger(s->il,c->input_feedback_prev_il))
+                       +2*p->current_error_a+ripple;
+    c->input_feedback_charge+=.5*(larger(0,s->ipv)
+                                  +larger(0,c->input_feedback_prev_ipv))*seconds;
+    c->input_feedback_upper_charge+=d_hi*il_upper*seconds;
+    c->input_feedback_window_us+=dt;
+    c->input_feedback_prev_vin=s->vin;c->input_feedback_prev_vout=s->vout;
+    c->input_feedback_prev_ipv=s->ipv;c->input_feedback_prev_il=s->il;
+    c->input_feedback_prev_duty=duty;
+    if(c->input_feedback_window_us<c->regulator.cfg.RAMP_VOUT_LATENCY_US+C07_LOOP_US)
+        return NULL;
+    c07_real_t elapsed=(c07_real_t)c->input_feedback_window_us*1e-6;
+    /* Falling VIN excludes the model's ordinary Cin charging explanation.
+     * Preserve two current-error allowances and both input divider loads.
+     * This identifies measurement/path inconsistency, not a specific sensor
+     * or a universal fault coverage claim. No nonzero signed-drive witness. */
+    bool inconsistent=s->vin<c->input_feedback_start_vin-2*vin_error
+        &&c->input_feedback_charge>c->input_feedback_upper_charge
+          +(2*p->current_error_a+vin_hi*(2.0/153300.0))*elapsed;
+    if(inconsistent)return "CURRENT_FEEDBACK_INCONSISTENCY";
+    if(duty>0)input_feedback_start(c,s,duty);
+    else c->input_feedback_window_valid=false;
+    return NULL;
+}
 int c07_charger_init(c07_charger *c, const c07_config *config) {
     if (!c || !config) return -1;
     memset(c,0,sizeof(*c)); c->state=C07_IDLE; c->fault="";
@@ -194,6 +261,7 @@ const c07_command *c07_charger_step(c07_charger *c, const c07_inputs *i,
     }
     if (reason) { c07_charger_trip(c,reason,now); return o; }
     reason=feedback_fault(c,s,(uint32_t)dt);
+    if(!reason)reason=input_feedback_fault(c,s,(uint32_t)dt);
     if(reason){c07_charger_trip(c,reason,now);return o;}
     if(powered_state(c->state)
        &&(i->pv_stopped||i->pwm_events==3u)){

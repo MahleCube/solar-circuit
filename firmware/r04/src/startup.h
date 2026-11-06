@@ -43,6 +43,14 @@ typedef struct {
     c07_real_t feedback_max_ripple;
     c07_real_t feedback_ripple_per_v_duty; /* immutable 1/(fsw*Lmin), init-owned */
     c07_real_t feedback_diode_loss_v; /* immutable Vf + modeled Buck loss */
+    /* Independent nonzero-current input-charge window. Never mix pre-fault
+     * large IL into the existing near-zero response/drive diagnostic above. */
+    bool input_feedback_window_valid;
+    uint32_t input_feedback_window_us;
+    c07_real_t input_feedback_start_vin, input_feedback_prev_vin;
+    c07_real_t input_feedback_prev_vout, input_feedback_prev_ipv;
+    c07_real_t input_feedback_prev_il, input_feedback_prev_duty;
+    c07_real_t input_feedback_charge, input_feedback_upper_charge;
     c07_controller regulator;
     c07_command command;
 } c07_charger;
