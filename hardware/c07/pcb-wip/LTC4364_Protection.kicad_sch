@@ -3645,7 +3645,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Vishay_TNPW0805"
 			(at 160.02 160.02 0)
 			(hide yes)
 			(show_name no)
@@ -3656,7 +3656,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.vishay.com/doc?28950"
 			(at 160.02 160.02 0)
 			(hide yes)
 			(show_name no)
@@ -3678,7 +3678,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PACKAGE_CANDIDATE; not fabrication qualified"
+		(property "FootprintStatus" "Existing C07 MPN; project-local land geometry checked against selected part source"
 			(at 160.02 160.02 0)
 			(hide yes)
 			(show_name no)
@@ -3722,7 +3722,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 engineering package envelope; nominal dimensions matched to existing MPN"
 			(at 160.02 160.02 0)
 			(hide yes)
 			(show_name no)
@@ -3889,7 +3889,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Vishay_TNPW0805"
 			(at 260.35 88.9 0)
 			(hide yes)
 			(show_name no)
@@ -3900,7 +3900,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.vishay.com/doc?28950"
 			(at 260.35 88.9 0)
 			(hide yes)
 			(show_name no)
@@ -3922,7 +3922,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PACKAGE_CANDIDATE; not fabrication qualified"
+		(property "FootprintStatus" "Existing C07 MPN; project-local land geometry checked against selected part source"
 			(at 260.35 88.9 0)
 			(hide yes)
 			(show_name no)
@@ -3966,7 +3966,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 engineering package envelope; nominal dimensions matched to existing MPN"
 			(at 260.35 88.9 0)
 			(hide yes)
 			(show_name no)
@@ -4210,7 +4210,7 @@
 				)
 			)
 		)
-		(property "Footprint" "C07_Planning:WSL3637_Kelvin_UNQUALIFIED"
+		(property "Footprint" "C07_Reviewed_LTC:WSL3637_2m_to_10m_Kelvin"
 			(at 137.16 43.18 0)
 			(hide yes)
 			(show_name no)
@@ -4243,7 +4243,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "WSL3637 2.7 mOhm four-terminal land checked against Vishay 30099 p2"
 			(at 137.16 43.18 0)
 			(hide yes)
 			(show_name no)
@@ -4287,7 +4287,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "Aligned Vishay 2-10 mOhm STEP; force and sense contacts verified"
 			(at 137.16 43.18 0)
 			(hide yes)
 			(show_name no)
@@ -4568,7 +4568,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Vishay_CRCW0805_H050"
 			(at 224.79 99.06 0)
 			(hide yes)
 			(show_name no)
@@ -4579,7 +4579,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
 			(at 224.79 99.06 0)
 			(hide yes)
 			(show_name no)
@@ -4601,7 +4601,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PACKAGE_CANDIDATE; not fabrication qualified"
+		(property "FootprintStatus" "Existing C07 MPN; project-local land geometry checked against selected part source"
 			(at 224.79 99.06 0)
 			(hide yes)
 			(show_name no)
@@ -4645,7 +4645,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 engineering package envelope; nominal dimensions matched to existing MPN"
 			(at 224.79 99.06 0)
 			(hide yes)
 			(show_name no)
@@ -4976,7 +4976,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Vishay_CRCW0805_H050"
 			(at 213.36 142.24 0)
 			(hide yes)
 			(show_name no)
@@ -4987,7 +4987,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
 			(at 213.36 142.24 0)
 			(hide yes)
 			(show_name no)
@@ -5009,7 +5009,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PACKAGE_CANDIDATE; not fabrication qualified"
+		(property "FootprintStatus" "Existing C07 MPN; project-local land geometry checked against selected part source"
 			(at 213.36 142.24 0)
 			(hide yes)
 			(show_name no)
@@ -5053,7 +5053,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 engineering package envelope; nominal dimensions matched to existing MPN"
 			(at 213.36 142.24 0)
 			(hide yes)
 			(show_name no)
@@ -5219,7 +5219,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Vishay_CRCW0805_H050"
 			(at 63.5 73.66 0)
 			(hide yes)
 			(show_name no)
@@ -5230,7 +5230,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
 			(at 63.5 73.66 0)
 			(hide yes)
 			(show_name no)
@@ -5252,7 +5252,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PACKAGE_CANDIDATE; not fabrication qualified"
+		(property "FootprintStatus" "Existing C07 MPN; project-local land geometry checked against selected part source"
 			(at 63.5 73.66 0)
 			(hide yes)
 			(show_name no)
@@ -5296,7 +5296,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 engineering package envelope; nominal dimensions matched to existing MPN"
 			(at 63.5 73.66 0)
 			(hide yes)
 			(show_name no)
@@ -5386,7 +5386,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:TO-263-3_TabPin2"
+		(property "Footprint" "C07_Reviewed_Power:TO-263-2"
 			(at 63.5 53.34 0)
 			(hide yes)
 			(show_name no)
@@ -5397,7 +5397,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.infineon.com/assets/row/public/documents/24/49/infineon-ipb048n15n5lf-datasheet-en.pdf#page=10"
 			(at 63.5 53.34 0)
 			(hide yes)
 			(show_name no)
@@ -5419,7 +5419,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PACKAGE_CANDIDATE; not fabrication qualified"
+		(property "FootprintStatus" "Existing C07 MPN; project-local land geometry checked against selected part source"
 			(at 63.5 53.34 0)
 			(hide yes)
 			(show_name no)
@@ -5463,7 +5463,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 engineering package envelope; nominal dimensions matched to existing MPN"
 			(at 63.5 53.34 0)
 			(hide yes)
 			(show_name no)
@@ -5556,7 +5556,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_1206_3216Metric"
+		(property "Footprint" "C07_Selected_PV:C_TDK_C3216_H160"
 			(at 209.55 110.49 0)
 			(hide yes)
 			(show_name no)
@@ -5567,7 +5567,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=CGA5L2C0G1H104J160AE"
 			(at 209.55 110.49 0)
 			(hide yes)
 			(show_name no)
@@ -5589,7 +5589,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PACKAGE_CANDIDATE; not fabrication qualified"
+		(property "FootprintStatus" "Existing C07 MPN; project-local land geometry checked against selected part source"
 			(at 209.55 110.49 0)
 			(hide yes)
 			(show_name no)
@@ -5633,7 +5633,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 engineering package envelope; nominal dimensions matched to existing MPN"
 			(at 209.55 110.49 0)
 			(hide yes)
 			(show_name no)
@@ -5722,7 +5722,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Vishay_TNPW0805"
 			(at 160.02 193.04 0)
 			(hide yes)
 			(show_name no)
@@ -5733,7 +5733,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.vishay.com/doc?28950"
 			(at 160.02 193.04 0)
 			(hide yes)
 			(show_name no)
@@ -5755,7 +5755,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PACKAGE_CANDIDATE; not fabrication qualified"
+		(property "FootprintStatus" "Existing C07 MPN; project-local land geometry checked against selected part source"
 			(at 160.02 193.04 0)
 			(hide yes)
 			(show_name no)
@@ -5799,7 +5799,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 engineering package envelope; nominal dimensions matched to existing MPN"
 			(at 160.02 193.04 0)
 			(hide yes)
 			(show_name no)
@@ -5966,7 +5966,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Vishay_TNPW0805"
 			(at 160.02 177.8 0)
 			(hide yes)
 			(show_name no)
@@ -5977,7 +5977,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.vishay.com/doc?28950"
 			(at 160.02 177.8 0)
 			(hide yes)
 			(show_name no)
@@ -5999,7 +5999,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PACKAGE_CANDIDATE; not fabrication qualified"
+		(property "FootprintStatus" "Existing C07 MPN; project-local land geometry checked against selected part source"
 			(at 160.02 177.8 0)
 			(hide yes)
 			(show_name no)
@@ -6043,7 +6043,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 engineering package envelope; nominal dimensions matched to existing MPN"
 			(at 160.02 177.8 0)
 			(hide yes)
 			(show_name no)
@@ -6131,7 +6131,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_SO:MSOP-16_3x4.039mm_P0.5mm"
+		(property "Footprint" "C07_Reviewed_Power:MSOP-16_3x4.039mm_P0.5mm"
 			(at 152.4 124.46 0)
 			(hide yes)
 			(show_name no)
@@ -6142,7 +6142,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/436412f.pdf"
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/ltc4364-1-4364-2.pdf"
 			(at 152.4 124.46 0)
 			(hide yes)
 			(show_name no)
@@ -6164,7 +6164,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PACKAGE_CANDIDATE; not fabrication qualified"
+		(property "FootprintStatus" "Existing C07 MPN; project-local land geometry checked against selected part source"
 			(at 152.4 124.46 0)
 			(hide yes)
 			(show_name no)
@@ -6208,7 +6208,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 engineering package envelope; nominal dimensions matched to existing MPN"
 			(at 152.4 124.46 0)
 			(hide yes)
 			(show_name no)
@@ -6505,7 +6505,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:TO-263-3_TabPin2"
+		(property "Footprint" "C07_Reviewed_Power:TO-263-2"
 			(at 104.14 53.34 0)
 			(hide yes)
 			(show_name no)
@@ -6516,7 +6516,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.infineon.com/assets/row/public/documents/24/49/infineon-ipb048n15n5lf-datasheet-en.pdf#page=10"
 			(at 104.14 53.34 0)
 			(hide yes)
 			(show_name no)
@@ -6538,7 +6538,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PACKAGE_CANDIDATE; not fabrication qualified"
+		(property "FootprintStatus" "Existing C07 MPN; project-local land geometry checked against selected part source"
 			(at 104.14 53.34 0)
 			(hide yes)
 			(show_name no)
@@ -6582,7 +6582,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 engineering package envelope; nominal dimensions matched to existing MPN"
 			(at 104.14 53.34 0)
 			(hide yes)
 			(show_name no)
@@ -6830,7 +6830,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Vishay_CRCW0805_H050"
 			(at 199.39 160.02 0)
 			(hide yes)
 			(show_name no)
@@ -6841,7 +6841,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
 			(at 199.39 160.02 0)
 			(hide yes)
 			(show_name no)
@@ -6863,7 +6863,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PACKAGE_CANDIDATE; not fabrication qualified"
+		(property "FootprintStatus" "Existing C07 MPN; project-local land geometry checked against selected part source"
 			(at 199.39 160.02 0)
 			(hide yes)
 			(show_name no)
@@ -6907,7 +6907,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 engineering package envelope; nominal dimensions matched to existing MPN"
 			(at 199.39 160.02 0)
 			(hide yes)
 			(show_name no)
@@ -6997,7 +6997,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_1210_3225Metric"
+		(property "Footprint" "C07_Selected_PV:C_TDK_C3225_H250"
 			(at 44.45 78.74 0)
 			(hide yes)
 			(show_name no)
@@ -7008,7 +7008,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=CGA6P3C0G2E473J250AA"
 			(at 44.45 78.74 0)
 			(hide yes)
 			(show_name no)
@@ -7030,7 +7030,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PACKAGE_CANDIDATE; not fabrication qualified"
+		(property "FootprintStatus" "Existing C07 MPN; project-local land geometry checked against selected part source"
 			(at 44.45 78.74 0)
 			(hide yes)
 			(show_name no)
@@ -7074,7 +7074,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 engineering package envelope; nominal dimensions matched to existing MPN"
 			(at 44.45 78.74 0)
 			(hide yes)
 			(show_name no)
@@ -7163,7 +7163,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Vishay_TNPW0805"
 			(at 260.35 119.38 0)
 			(hide yes)
 			(show_name no)
@@ -7174,7 +7174,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.vishay.com/doc?28950"
 			(at 260.35 119.38 0)
 			(hide yes)
 			(show_name no)
@@ -7196,7 +7196,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PACKAGE_CANDIDATE; not fabrication qualified"
+		(property "FootprintStatus" "Existing C07 MPN; project-local land geometry checked against selected part source"
 			(at 260.35 119.38 0)
 			(hide yes)
 			(show_name no)
@@ -7240,7 +7240,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 engineering package envelope; nominal dimensions matched to existing MPN"
 			(at 260.35 119.38 0)
 			(hide yes)
 			(show_name no)
@@ -7331,7 +7331,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_THT:CP_Radial_D12.5mm_P5.00mm"
+		(property "Footprint" "C07_Cap_Envelopes:CP_Radial_D12.5mm_P5.00mm"
 			(at 276.86 57.15 0)
 			(hide yes)
 			(show_name no)
@@ -7364,7 +7364,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PACKAGE_CANDIDATE; not fabrication qualified"
+		(property "FootprintStatus" "Nominal case diameter and lead pitch checked; land unchanged"
 			(at 276.86 57.15 0)
 			(hide yes)
 			(show_name no)
@@ -7408,7 +7408,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "Project nominal clearance envelope 12.5 x 35 mm, pitch 5 mm; mounted height and tolerance require allowance"
 			(at 276.86 57.15 0)
 			(hide yes)
 			(show_name no)
@@ -7575,7 +7575,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_2512_6332Metric"
+		(property "Footprint" "C07_Selected_PV:R_Vishay_CRCW2512_H060"
 			(at 68.58 121.92 0)
 			(hide yes)
 			(show_name no)
@@ -7586,7 +7586,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
 			(at 68.58 121.92 0)
 			(hide yes)
 			(show_name no)
@@ -7608,7 +7608,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PACKAGE_CANDIDATE; not fabrication qualified"
+		(property "FootprintStatus" "Existing C07 MPN; project-local land geometry checked against selected part source"
 			(at 68.58 121.92 0)
 			(hide yes)
 			(show_name no)
@@ -7652,7 +7652,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 engineering package envelope; nominal dimensions matched to existing MPN"
 			(at 68.58 121.92 0)
 			(hide yes)
 			(show_name no)

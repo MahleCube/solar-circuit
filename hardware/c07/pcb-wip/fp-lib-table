@@ -1,7 +1,13 @@
 (fp_lib_table
   (version 7)
-
-  (lib (name "C07_Planning") (type "KiCad") (uri "${KIPRJMOD}/libraries/C07_Planning.pretty") (options "") (descr ""))
   (lib (name "Claude_R03R2") (type "KiCad") (uri "${KIPRJMOD}/libraries/Claude_R03R2.pretty") (options "") (descr ""))
   (lib (name "Reduced_Codex") (type "KiCad") (uri "${KIPRJMOD}/libraries/Reduced_Codex.pretty") (options "") (descr ""))
-  (lib (name "L1_Assembly") (type "KiCad") (uri "${KIPRJMOD}/libraries/L1_Assembly.pretty") (options "") (descr "")))
+  (lib (name "L1_Assembly") (type "KiCad") (uri "${KIPRJMOD}/libraries/L1_Assembly.pretty") (options "") (descr ""))
+  (lib (name "C07_AssetReview") (type "KiCad") (uri "${KIPRJMOD}/libraries/C07_AssetReview.pretty") (options "") (descr ""))
+  (lib (name "C07_Reviewed_LTC") (type "KiCad") (uri "${KIPRJMOD}/libraries/C07_Reviewed_LTC.pretty") (options "") (descr ""))
+  (lib (name "C07_Cap_Envelopes") (type "KiCad") (uri "${KIPRJMOD}/libraries/C07_Cap_Envelopes.pretty") (options "") (descr ""))
+  (lib (name "C07_Selected_PV") (type "KiCad") (uri "${KIPRJMOD}/libraries/C07_Selected_PV.pretty") (options "") (descr ""))
+  (lib (name "C07_Reviewed_Bourns") (type "KiCad") (uri "${KIPRJMOD}/libraries/C07_Reviewed_Bourns.pretty") (options "") (descr ""))
+  (lib (name "C07_Reviewed_Power") (type "KiCad") (uri "${KIPRJMOD}/libraries/C07_Reviewed_Power.pretty") (options "") (descr ""))
+  (lib (name "C07_Reviewed_Special") (type "KiCad") (uri "${KIPRJMOD}/libraries/C07_Reviewed_Special.pretty") (options "") (descr ""))
+  (lib (name "Connector_C07") (type "KiCad") (uri "${KIPRJMOD}/libraries/Connector_C07.pretty") (options "") (descr "")))

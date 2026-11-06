@@ -9,6 +9,8 @@ RP2040とCによる制御を想定した、太陽光充電システムの設計�
 - [部品表（Excel）](docs/bom/c07_BOM.xlsx)
 - [回路図（PDF・3ページ）](docs/schematic/C07_Solar.pdf)
 - [KiCad回路図データ](hardware/c07/project/)
-- [KiCad PCBデータ（未完成）](hardware/c07/pcb-wip/)
+- [KiCad PCBデータ（r26・配置配線完了／実機未検証）](hardware/c07/pcb-wip/)
 - [r04 制御コード（C）](firmware/r04/)
 - [MATLAB回路図データ（エリア枠・長文説明なし）](hardware/c07/matlab/)
+
+PCBは264 × 136 mmの6層設計です。r26ではPico Wの交換式ソケットとM3用取付穴4か所まで反映しています。対応する回路図・ライブラリはPCBフォルダーに同梱しています。放熱器・外部接続・製造条件の確定と実機評価は未実施です。

@@ -1,0 +1,207 @@
+(footprint "Traco_TSR1WI_vertical_5pin"
+	(version 20260206)
+	(generator "pcbnew")
+	(generator_version "10.0")
+	(layer "F.Cu")
+	(descr "TRACO TSR1WI vertical; 5 tabs with 1/2/3 Vin/GND/Vout and mechanical case 4/5; unconnected case terminals retained.")
+	(property "Reference" "REF**"
+		(at 2.54 -2.775 0)
+		(layer "F.SilkS")
+		(uuid "49fe9a79-d254-42bd-9521-52c0b061f787")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "Traco_TSR1WI_vertical_5pin"
+		(at 2.54 4.975 0)
+		(layer "F.Fab")
+		(uuid "9b7d7bc2-14b7-4a81-8989-350cadf87655")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "93f22760-a578-41f4-9c4b-7b50121764eb")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "d22972b8-b7d0-48c3-aed6-d3331a13d5e5")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(attr through_hole)
+	(duplicate_pad_numbers_are_jumpers no)
+	(fp_line
+		(start -3.62 -3.31)
+		(end -3.62 -1.8)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "38bd5d94-4f9f-44a1-b209-e333de8cd122")
+	)
+	(fp_line
+		(start -3.62 -3.31)
+		(end 8.7 -3.31)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "ffae8e57-3d16-488a-8206-3a367c65d4c4")
+	)
+	(fp_line
+		(start -3.62 5.51)
+		(end -3.62 3.96)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "589a6b87-8e8b-4146-a7e1-5222cbdacb24")
+	)
+	(fp_line
+		(start -3.62 5.51)
+		(end 8.7 5.51)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "f5c07ccc-a626-461a-a1f9-092b7ee4abf2")
+	)
+	(fp_line
+		(start -0.34 -2.7)
+		(end 0.34 -2.7)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "2af44039-304e-4c1d-84e1-fd12acc71b23")
+	)
+	(fp_line
+		(start 8.7 -3.31)
+		(end 8.7 -1.8)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "4887515c-335a-4c05-8ba4-06b5ffc53f31")
+	)
+	(fp_line
+		(start 8.7 5.51)
+		(end 8.7 3.96)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "53470a38-7a16-452d-9381-7f3a211324af")
+	)
+	(fp_rect
+		(start -4.94 -3.7)
+		(end 10.02 5.9)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "02def609-4626-477a-bdc2-d4202580efdf")
+	)
+	(fp_line
+		(start -3.51 -2.55)
+		(end -2.86 -3.2)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "3b87a307-5963-4aca-aacd-a24a3e452770")
+	)
+	(fp_rect
+		(start -3.51 -3.2)
+		(end 8.59 5.4)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "064412aa-af77-4a7b-9ca7-ca10fe0076c4")
+	)
+	(pad "1" thru_hole rect
+		(at 0 0)
+		(size 1.8 1.8)
+		(drill 1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "337fdd08-733d-4edc-9985-c12f72b55e4d")
+	)
+	(pad "2" thru_hole circle
+		(at 2.54 0)
+		(size 1.8 1.8)
+		(drill 1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "eff45b88-0004-4271-8212-e10b3823caf6")
+	)
+	(pad "3" thru_hole circle
+		(at 5.08 0)
+		(size 1.8 1.8)
+		(drill 1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "08002945-cd55-44cb-8906-e35c558fd53d")
+	)
+	(pad "4" thru_hole oval
+		(at -3.21 1.1)
+		(size 2.8 5.3)
+		(drill oval 2 4.5)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "9b50846a-639d-40f7-bff2-d050b3c4b283")
+	)
+	(pad "5" thru_hole oval
+		(at 8.29 1.1)
+		(size 2.8 5.3)
+		(drill oval 2 4.5)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "3d54fefa-1a17-499c-acd3-c82f8008c909")
+	)
+	(embedded_fonts no)
+	(model "${KIPRJMOD}/3dmodels/C07_Reviewed_Special.3dshapes/Traco_TSR1WI_vertical_5pin.step"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
+)

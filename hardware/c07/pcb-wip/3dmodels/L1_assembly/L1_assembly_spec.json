@@ -1,0 +1,251 @@
+{
+  "footprint_name": "Tamura_NAC20_0201_No265_FormedLeads_4x2",
+  "library_id": "L1_Assembly:Tamura_NAC20_0201_No265_FormedLeads_4x2",
+  "manufacturer_verified": {
+    "coil_mpn": "NAC-20-0201",
+    "wire_spec": "1.1 mm x 4 parallel strands",
+    "coil_outer_diameter_mm": 57,
+    "coil_axial_thickness_mm": 35,
+    "base": "No.265",
+    "base_xyz_mm": [
+      46,
+      33.5,
+      11
+    ],
+    "base_lead_holes": {
+      "count": 18,
+      "diameter_mm": 1.5,
+      "x_centers_mm": [
+        -10.0,
+        -7.5,
+        -5.0,
+        -2.5,
+        0.0,
+        2.5,
+        5.0,
+        7.5,
+        10.0
+      ],
+      "row_y_mm": [
+        -15,
+        15
+      ]
+    },
+    "auxiliary_support_pins": {
+      "diameter_mm": 1.0,
+      "x_centers_mm": [
+        -20,
+        20
+      ],
+      "y_centers_mm": [
+        -12.5,
+        12.5
+      ],
+      "electrical": false
+    }
+  },
+  "project_assembly_design": {
+    "authorization": "User: bare coil and separate base, not factory mounted completed part.",
+    "electrical_terminals": [
+      {
+        "logical_pin": "1",
+        "net_identity": "SW",
+        "pad_xy_mm": [
+          -7.5,
+          -15
+        ],
+        "model_xy_mm": [
+          -7.5,
+          15
+        ],
+        "wire_diameter_mm": 1.1,
+        "pcb_pth_drill_mm": 1.5,
+        "pad_diameter_mm": 3.2
+      },
+      {
+        "logical_pin": "1",
+        "net_identity": "SW",
+        "pad_xy_mm": [
+          -2.5,
+          -15
+        ],
+        "model_xy_mm": [
+          -2.5,
+          15
+        ],
+        "wire_diameter_mm": 1.1,
+        "pcb_pth_drill_mm": 1.5,
+        "pad_diameter_mm": 3.2
+      },
+      {
+        "logical_pin": "1",
+        "net_identity": "SW",
+        "pad_xy_mm": [
+          2.5,
+          -15
+        ],
+        "model_xy_mm": [
+          2.5,
+          15
+        ],
+        "wire_diameter_mm": 1.1,
+        "pcb_pth_drill_mm": 1.5,
+        "pad_diameter_mm": 3.2
+      },
+      {
+        "logical_pin": "1",
+        "net_identity": "SW",
+        "pad_xy_mm": [
+          7.5,
+          -15
+        ],
+        "model_xy_mm": [
+          7.5,
+          15
+        ],
+        "wire_diameter_mm": 1.1,
+        "pcb_pth_drill_mm": 1.5,
+        "pad_diameter_mm": 3.2
+      },
+      {
+        "logical_pin": "2",
+        "net_identity": "L_OUT",
+        "pad_xy_mm": [
+          -7.5,
+          15
+        ],
+        "model_xy_mm": [
+          -7.5,
+          -15
+        ],
+        "wire_diameter_mm": 1.1,
+        "pcb_pth_drill_mm": 1.5,
+        "pad_diameter_mm": 3.2
+      },
+      {
+        "logical_pin": "2",
+        "net_identity": "L_OUT",
+        "pad_xy_mm": [
+          -2.5,
+          15
+        ],
+        "model_xy_mm": [
+          -2.5,
+          -15
+        ],
+        "wire_diameter_mm": 1.1,
+        "pcb_pth_drill_mm": 1.5,
+        "pad_diameter_mm": 3.2
+      },
+      {
+        "logical_pin": "2",
+        "net_identity": "L_OUT",
+        "pad_xy_mm": [
+          2.5,
+          15
+        ],
+        "model_xy_mm": [
+          2.5,
+          -15
+        ],
+        "wire_diameter_mm": 1.1,
+        "pcb_pth_drill_mm": 1.5,
+        "pad_diameter_mm": 3.2
+      },
+      {
+        "logical_pin": "2",
+        "net_identity": "L_OUT",
+        "pad_xy_mm": [
+          7.5,
+          15
+        ],
+        "model_xy_mm": [
+          7.5,
+          -15
+        ],
+        "wire_diameter_mm": 1.1,
+        "pcb_pth_drill_mm": 1.5,
+        "pad_diameter_mm": 3.2
+      }
+    ],
+    "mechanical_holes": [
+      {
+        "pad_xy_mm": [
+          -20,
+          -12.5
+        ],
+        "model_xy_mm": [
+          -20,
+          12.5
+        ],
+        "pin_diameter_mm": 1.0,
+        "pcb_npth_drill_mm": 1.2
+      },
+      {
+        "pad_xy_mm": [
+          -20,
+          12.5
+        ],
+        "model_xy_mm": [
+          -20,
+          -12.5
+        ],
+        "pin_diameter_mm": 1.0,
+        "pcb_npth_drill_mm": 1.2
+      },
+      {
+        "pad_xy_mm": [
+          20,
+          -12.5
+        ],
+        "model_xy_mm": [
+          20,
+          12.5
+        ],
+        "pin_diameter_mm": 1.0,
+        "pcb_npth_drill_mm": 1.2
+      },
+      {
+        "pad_xy_mm": [
+          20,
+          12.5
+        ],
+        "model_xy_mm": [
+          20,
+          -12.5
+        ],
+        "pin_diameter_mm": 1.0,
+        "pcb_npth_drill_mm": 1.2
+      }
+    ],
+    "pin_1": "Preserve winding-end bundle A (all four parallel strands) together and form to X=-7.5,-2.5,+2.5,+7.5 at local Y=-15; SW.",
+    "pin_2": "Preserve opposite winding-end bundle B (all four parallel strands) together and form to same X at local Y=+15; L_OUT.",
+    "unused_base_holes": "Ten unused base lead-insertion positions are Fab guides only, not drilled on PCB.",
+    "lead_protrusion_mm": 3.5,
+    "seating_height_assumption_mm": 1,
+    "overall_height_assumption_mm": 58,
+    "pcb_drill_choice": "PTH 1.5 mm for 1.1 mm wire; NPTH 1.2 mm for 1.0 mm auxiliary pin. Fabrication tolerances and sample fit still need confirmation.",
+    "boundaries": "This is a specified custom lead-forming assembly, not a manufacturer-approved completed assembly or a hardware fit validation."
+  },
+  "model": {
+    "file": "Tamura_NAC20_0201_No265_FormedLeads_4x2.step",
+    "sha256": "7e084f85252f6fa6d4186f2680d5df20099c50965f6ffff7fc55ab8490a6ff7f",
+    "bbox_mm": [
+      -28.5,
+      -17.5,
+      -3.5,
+      28.5,
+      17.5,
+      58.0
+    ],
+    "notes": "Pin axes and formed lead positions are explicit. Internal winding appearance, aperture, cradle surface and seating height are simplified."
+  },
+  "footprint": {
+    "file": "geometry\\L1_Assembly.pretty\\Tamura_NAC20_0201_No265_FormedLeads_4x2.kicad_mod",
+    "sha256": "13a9f856c9b77adf3cecf89bb306adf75f10d53108716fcb3d235d59d260bbfc"
+  },
+  "sources": [
+    "https://www.tamuracorp.com/products/download/pdf/nac.pdf",
+    "https://www.tamuracorp.com/products/download/pdf/magnetic_plinth.pdf"
+  ]
+}

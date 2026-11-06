@@ -1,0 +1,119 @@
+(footprint "SCHURTER_SMD_SPT_5x20"
+	(version 20260206)
+	(generator "pcbnew")
+	(generator_version "10.0")
+	(layer "F.Cu")
+	(descr "SCHURTER 0001.2706.11 SMD-SPT 5x20. Manufacturer reflow lands 5.5 x 5.0 mm at X +/-7.5 mm per SMD-SPT 5x20 datasheet p. 2. Nonpolar.")
+	(property "Reference" "REF**"
+		(at 0 -2.75 0)
+		(layer "F.SilkS")
+		(uuid "acf23f0e-15d3-48b5-a0dc-f001c4e9527e")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "SCHURTER_SMD_SPT_5x20"
+		(at 0 2.75 0)
+		(layer "F.Fab")
+		(uuid "103a8503-af96-4a21-a096-aec19d4c80db")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "56e5ab77-d793-4710-849f-f31f579e45c0")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "655c0eb8-9967-469d-8ae7-2db5eb2e61d0")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(attr smd)
+	(duplicate_pad_numbers_are_jumpers no)
+	(fp_line
+		(start -9.95 -2.78)
+		(end 9.95 -2.78)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "a8252283-5588-4829-ad2c-9ad9b8f9b247")
+	)
+	(fp_line
+		(start -9.95 2.78)
+		(end 9.95 2.78)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "b19f8bf4-14bb-4017-abc9-f01dcd25cba5")
+	)
+	(fp_rect
+		(start -10.75 -2.86)
+		(end 10.75 2.86)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "4e54c9c7-4b71-4daf-8c50-a2185568cb69")
+	)
+	(fp_rect
+		(start -10 -2.55)
+		(end 10 2.55)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "e6aad386-9db6-47b3-8eb1-15bf1fa0bf73")
+	)
+	(pad "1" smd rect
+		(at -7.5 0)
+		(size 5.5 5)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "463a66a2-4787-41e0-afc8-bfa36c9c9a45")
+	)
+	(pad "2" smd rect
+		(at 7.5 0)
+		(size 5.5 5)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "4b3a21de-da3a-4f24-a2b6-1e1515187ba3")
+	)
+	(embedded_fonts no)
+	(model "${KIPRJMOD}/3dmodels/C07_Selected_PV.3dshapes/SCHURTER_SMD_SPT_5x20.step"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
+)

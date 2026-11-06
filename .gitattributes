@@ -1,0 +1,2 @@
+# Preserve the exact bytes of the reviewed KiCad delivery.
+hardware/c07/pcb-wip/** -text

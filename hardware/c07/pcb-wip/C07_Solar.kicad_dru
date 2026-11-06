@@ -1,0 +1,17 @@
+(version 1)
+(rule "C07 M3 H1 hardware space"
+  (condition "A.intersectsArea('C07_M3_H1') && A.Reference != 'H1'")
+  (constraint disallow pad footprint))
+
+(rule "C07 M3 H2 hardware space"
+  (condition "A.intersectsArea('C07_M3_H2') && A.Reference != 'H2'")
+  (constraint disallow pad footprint))
+
+(rule "C07 M3 H3 hardware space"
+  (condition "A.intersectsArea('C07_M3_H3') && A.Reference != 'H3'")
+  (constraint disallow pad footprint))
+
+(rule "C07 M3 H4 hardware space"
+  (condition "A.intersectsArea('C07_M3_H4') && A.Reference != 'H4'")
+  (constraint disallow pad footprint))
+

@@ -3909,7 +3909,9 @@
 				)
 			)
 			(embedded_fonts no)
-		)
+		
+    (jumper_pin_groups ("IP" "KP") ("IM" "KM"))
+)
 		(symbol "Readable:TLV3201AIDBVR_clear_power_text_r02"
 			(pin_names
 				(offset 1.016)
@@ -10227,7 +10229,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Panasonic_ERJ6E_2012"
 			(at 231.14 185.42 0)
 			(hide yes)
 			(show_name no)
@@ -10238,7 +10240,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://industrial.panasonic.com/ww/products/pt/general-purpose-chip-resistors/models/ERJ6ENF1133V"
 			(at 231.14 185.42 0)
 			(hide yes)
 			(show_name no)
@@ -10260,7 +10262,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 231.14 185.42 0)
 			(hide yes)
 			(show_name no)
@@ -10293,7 +10295,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "ERJ6ENF1133V"
 			(at 231.14 185.42 0)
 			(hide yes)
 			(show_name no)
@@ -10304,7 +10306,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 231.14 185.42 0)
 			(hide yes)
 			(show_name no)
@@ -10362,6 +10364,51 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "Manufacturer" "Panasonic"
+			(at 231.14 185.42 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "1%"
+			(at 231.14 185.42 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 231.14 185.42 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedPower_at70C_W" "0.125"
+			(at 231.14 185.42 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "150"
+			(at 231.14 185.42 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "Device:R")
@@ -10392,7 +10439,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Panasonic_ERJ6E_2012"
 			(at 238.76 220.98 0)
 			(hide yes)
 			(show_name no)
@@ -10403,7 +10450,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://industrial.panasonic.com/ww/products/pt/general-purpose-chip-resistors/models/ERJ6ENF1003V"
 			(at 238.76 220.98 0)
 			(hide yes)
 			(show_name no)
@@ -10425,7 +10472,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 238.76 220.98 0)
 			(hide yes)
 			(show_name no)
@@ -10458,7 +10505,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "ERJ6ENF1003V"
 			(at 238.76 220.98 0)
 			(hide yes)
 			(show_name no)
@@ -10469,7 +10516,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 238.76 220.98 0)
 			(hide yes)
 			(show_name no)
@@ -10527,6 +10574,51 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "Manufacturer" "Panasonic"
+			(at 238.76 220.98 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "1%"
+			(at 238.76 220.98 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 238.76 220.98 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedPower_at70C_W" "0.125"
+			(at 238.76 220.98 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "150"
+			(at 238.76 220.98 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "C07:LTC7000ARMSE")
@@ -10557,7 +10649,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_SO:MSOP-16-1EP_3x4.039mm_P0.5mm_EP1.651x2.845mm"
+		(property "Footprint" "C07_Reviewed_Power:MSOP-16-1EP_3x4.039mm_P0.5mm_EP1.651x2.845mm"
 			(at 270.51 165.1 0)
 			(hide yes)
 			(show_name no)
@@ -10568,7 +10660,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/ltc7000a.pdf"
+		(property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/ltc7000a.pdf#page=28"
 			(at 270.51 165.1 0)
 			(hide yes)
 			(show_name no)
@@ -10590,7 +10682,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PACKAGE_CANDIDATE; not fabrication qualified"
+		(property "FootprintStatus" "Existing C07 MPN; project-local land geometry checked against selected part source"
 			(at 270.51 165.1 0)
 			(hide yes)
 			(show_name no)
@@ -10634,7 +10726,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 engineering package envelope; nominal dimensions matched to existing MPN"
 			(at 270.51 165.1 0)
 			(hide yes)
 			(show_name no)
@@ -10768,7 +10860,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Panasonic_ERJ6E_2012"
 			(at 116.84 171.45 0)
 			(hide yes)
 			(show_name no)
@@ -10779,7 +10871,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://industrial.panasonic.com/ww/products/pt/general-purpose-chip-resistors/models/ERJ6ENF8203V"
 			(at 116.84 171.45 0)
 			(hide yes)
 			(show_name no)
@@ -10801,7 +10893,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 116.84 171.45 0)
 			(hide yes)
 			(show_name no)
@@ -10834,7 +10926,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "ERJ6ENF8203V"
 			(at 116.84 171.45 0)
 			(hide yes)
 			(show_name no)
@@ -10845,7 +10937,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 116.84 171.45 0)
 			(hide yes)
 			(show_name no)
@@ -10903,6 +10995,51 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "Manufacturer" "Panasonic"
+			(at 116.84 171.45 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "1%"
+			(at 116.84 171.45 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 116.84 171.45 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedPower_at70C_W" "0.125"
+			(at 116.84 171.45 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "150"
+			(at 116.84 171.45 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "C07:SN74LVC1G74DCTR")
@@ -10933,7 +11070,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_SO:SSOP-8_2.95x2.8mm_P0.65mm"
+		(property "Footprint" "C07_Selected_PV:TI_DCT0008A"
 			(at 439.42 279.4 0)
 			(hide yes)
 			(show_name no)
@@ -10944,7 +11081,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://www.ti.com/lit/ds/symlink/sn74lvc1g74.pdf"
+		(property "Datasheet" "https://www.ti.com/lit/gpn/sn74lvc1g74#page=20"
 			(at 439.42 279.4 0)
 			(hide yes)
 			(show_name no)
@@ -10966,7 +11103,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PACKAGE_CANDIDATE; not fabrication qualified"
+		(property "FootprintStatus" "Existing C07 MPN; project-local land geometry checked against selected part source"
 			(at 439.42 279.4 0)
 			(hide yes)
 			(show_name no)
@@ -11010,7 +11147,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 engineering package envelope; nominal dimensions matched to existing MPN"
 			(at 439.42 279.4 0)
 			(hide yes)
 			(show_name no)
@@ -11116,7 +11253,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Vishay_TNPW0805"
 			(at 213.36 375.92 0)
 			(hide yes)
 			(show_name no)
@@ -11127,7 +11264,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.vishay.com/docs/28758/tnpw_e3.pdf"
 			(at 213.36 375.92 0)
 			(hide yes)
 			(show_name no)
@@ -11149,7 +11286,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 213.36 375.92 0)
 			(hide yes)
 			(show_name no)
@@ -11182,7 +11319,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "TNPW080521K3BEEA"
 			(at 213.36 375.92 0)
 			(hide yes)
 			(show_name no)
@@ -11193,7 +11330,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 213.36 375.92 0)
 			(hide yes)
 			(show_name no)
@@ -11251,6 +11388,51 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "Manufacturer" "Vishay"
+			(at 213.36 375.92 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "0.1%"
+			(at 213.36 375.92 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 213.36 375.92 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedPower_at70C_W" "0.26"
+			(at 213.36 375.92 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "150"
+			(at 213.36 375.92 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "Device:C")
@@ -11283,7 +11465,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+		(property "Footprint" "C07_Selected_PV:C_TDK_C1608_H080"
 			(at 91.44 247.65 0)
 			(hide yes)
 			(show_name no)
@@ -11294,7 +11476,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA"
 			(at 91.44 247.65 0)
 			(hide yes)
 			(show_name no)
@@ -11316,7 +11498,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PACKAGE_CANDIDATE; not fabrication qualified"
+		(property "FootprintStatus" "Existing C07 MPN; project-local land geometry checked against selected part source"
 			(at 91.44 247.65 0)
 			(hide yes)
 			(show_name no)
@@ -11360,7 +11542,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 engineering package envelope; nominal dimensions matched to existing MPN"
 			(at 91.44 247.65 0)
 			(hide yes)
 			(show_name no)
@@ -11448,7 +11630,7 @@
 				)
 			)
 		)
-		(property "Footprint" "C07_Planning:V20PW22_Ktab_A1_A2_UNQUALIFIED"
+		(property "Footprint" "C07_AssetReview:Vishay_V20PW22_SlimDPAK_TO-252AE_K12"
 			(at 195.58 73.66 0)
 			(hide yes)
 			(show_name no)
@@ -11481,7 +11663,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "Manufacturer land documented and measured, Vishay 87004 p5; K upper, lead 1 right and 2 left in component-side view"
 			(at 195.58 73.66 0)
 			(hide yes)
 			(show_name no)
@@ -11525,7 +11707,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "Aligned Vishay SlimDPAK STEP; terminal contact regions verified"
 			(at 195.58 73.66 0)
 			(hide yes)
 			(show_name no)
@@ -11569,7 +11751,7 @@
 				)
 			)
 		)
-		(property "SymbolMatchBasis" "Vishay 87004 p1: leads 1 and 2 are A; tab is K. Exact symbol pin identities; footprint not qualified."
+		(property "SymbolMatchBasis" "Vishay 87004 p1: leads 1 and 2 anodes, tab K cathode; bottom-view labels mapped to component side"
 			(at 195.58 73.66 0)
 			(hide yes)
 			(show_name no)
@@ -11638,7 +11820,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Panasonic_ERJ6E_2012"
 			(at 185.42 158.75 0)
 			(hide yes)
 			(show_name no)
@@ -11649,7 +11831,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://industrial.panasonic.com/ww/products/pt/general-purpose-chip-resistors/models/ERJ6ENF1022V"
 			(at 185.42 158.75 0)
 			(hide yes)
 			(show_name no)
@@ -11671,7 +11853,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 185.42 158.75 0)
 			(hide yes)
 			(show_name no)
@@ -11704,7 +11886,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "ERJ6ENF1022V"
 			(at 185.42 158.75 0)
 			(hide yes)
 			(show_name no)
@@ -11715,7 +11897,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 185.42 158.75 0)
 			(hide yes)
 			(show_name no)
@@ -11773,6 +11955,51 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "Manufacturer" "Panasonic"
+			(at 185.42 158.75 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "1%"
+			(at 185.42 158.75 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 185.42 158.75 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedPower_at70C_W" "0.125"
+			(at 185.42 158.75 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "150"
+			(at 185.42 158.75 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "Device:C")
@@ -11805,7 +12032,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:C_Murata_GRM21_H125"
 			(at 215.9 251.46 0)
 			(hide yes)
 			(show_name no)
@@ -11816,7 +12043,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://pim.murata.com/asset/pim4/ceramicCapacitorSMD/GRM21BR71H104KA01-01-EN_PDF_CERAMICCAPACITORSMD"
 			(at 215.9 251.46 0)
 			(hide yes)
 			(show_name no)
@@ -11838,7 +12065,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 215.9 251.46 0)
 			(hide yes)
 			(show_name no)
@@ -11871,7 +12098,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM21BR71H104KA01L"
 			(at 215.9 251.46 0)
 			(hide yes)
 			(show_name no)
@@ -11882,7 +12109,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 215.9 251.46 0)
 			(hide yes)
 			(show_name no)
@@ -11940,6 +12167,42 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "Manufacturer" "Murata"
+			(at 215.9 251.46 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "10%"
+			(at 215.9 251.46 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 215.9 251.46 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "50"
+			(at 215.9 251.46 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "Device:R")
@@ -11970,7 +12233,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Panasonic_ERJ6E_2012"
 			(at 365.76 335.28 0)
 			(hide yes)
 			(show_name no)
@@ -11981,7 +12244,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://industrial.panasonic.com/ww/products/pt/general-purpose-chip-resistors/models/ERJ6ENF1002V"
 			(at 365.76 335.28 0)
 			(hide yes)
 			(show_name no)
@@ -12003,7 +12266,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 365.76 335.28 0)
 			(hide yes)
 			(show_name no)
@@ -12036,7 +12299,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "ERJ6ENF1002V"
 			(at 365.76 335.28 0)
 			(hide yes)
 			(show_name no)
@@ -12047,7 +12310,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 365.76 335.28 0)
 			(hide yes)
 			(show_name no)
@@ -12098,6 +12361,51 @@
 		)
 	
 		(property "PCBInitialPlacement" "Schematic anchor 1:1; user final placement"
+			(at 365.76 335.28 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "Panasonic"
+			(at 365.76 335.28 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "1%"
+			(at 365.76 335.28 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 365.76 335.28 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedPower_at70C_W" "0.125"
+			(at 365.76 335.28 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "150"
 			(at 365.76 335.28 0)
 			(hide yes)
 			(effects
@@ -12302,7 +12610,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:C_TDK_C2012_H060"
 			(at 191.77 220.98 0)
 			(hide yes)
 			(show_name no)
@@ -12313,7 +12621,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012C0G1H102J060AA"
 			(at 191.77 220.98 0)
 			(hide yes)
 			(show_name no)
@@ -12335,7 +12643,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 191.77 220.98 0)
 			(hide yes)
 			(show_name no)
@@ -12368,7 +12676,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C2012C0G1H102J060AA"
 			(at 191.77 220.98 0)
 			(hide yes)
 			(show_name no)
@@ -12379,7 +12687,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 191.77 220.98 0)
 			(hide yes)
 			(show_name no)
@@ -12437,6 +12745,42 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "Manufacturer" "TDK"
+			(at 191.77 220.98 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "5%"
+			(at 191.77 220.98 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 191.77 220.98 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "50"
+			(at 191.77 220.98 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "Device:R")
@@ -12467,7 +12811,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Panasonic_ERJ6E_2012"
 			(at 320.04 127 0)
 			(hide yes)
 			(show_name no)
@@ -12478,7 +12822,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://industrial.panasonic.com/ww/products/pt/general-purpose-chip-resistors/models/ERJ6ENF1000V"
 			(at 320.04 127 0)
 			(hide yes)
 			(show_name no)
@@ -12500,7 +12844,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 320.04 127 0)
 			(hide yes)
 			(show_name no)
@@ -12533,7 +12877,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "ERJ6ENF1000V"
 			(at 320.04 127 0)
 			(hide yes)
 			(show_name no)
@@ -12544,7 +12888,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 320.04 127 0)
 			(hide yes)
 			(show_name no)
@@ -12602,6 +12946,51 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "Manufacturer" "Panasonic"
+			(at 320.04 127 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "1%"
+			(at 320.04 127 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 320.04 127 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedPower_at70C_W" "0.125"
+			(at 320.04 127 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "150"
+			(at 320.04 127 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "Device:C")
@@ -12634,7 +13023,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:C_TDK_C2012_H125"
 			(at 213.36 158.75 0)
 			(hide yes)
 			(show_name no)
@@ -12645,7 +13034,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB"
 			(at 213.36 158.75 0)
 			(hide yes)
 			(show_name no)
@@ -12667,7 +13056,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 213.36 158.75 0)
 			(hide yes)
 			(show_name no)
@@ -12700,7 +13089,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C2012X7R1H105K125AB"
 			(at 213.36 158.75 0)
 			(hide yes)
 			(show_name no)
@@ -12711,7 +13100,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 213.36 158.75 0)
 			(hide yes)
 			(show_name no)
@@ -12769,6 +13158,42 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "Manufacturer" "TDK"
+			(at 213.36 158.75 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "10%"
+			(at 213.36 158.75 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 213.36 158.75 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "50"
+			(at 213.36 158.75 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "Device:C")
@@ -12801,7 +13226,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:C_TDK_C4532_H320"
 			(at 439.42 218.44 0)
 			(hide yes)
 			(show_name no)
@@ -12812,7 +13237,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C4532C0G2E104J320KN"
 			(at 439.42 218.44 0)
 			(hide yes)
 			(show_name no)
@@ -12834,7 +13259,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 439.42 218.44 0)
 			(hide yes)
 			(show_name no)
@@ -12867,7 +13292,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C4532C0G2E104J320KN"
 			(at 439.42 218.44 0)
 			(hide yes)
 			(show_name no)
@@ -12878,7 +13303,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 439.42 218.44 0)
 			(hide yes)
 			(show_name no)
@@ -12929,6 +13354,42 @@
 		)
 	
 		(property "PCBInitialPlacement" "Schematic anchor 1:1; user final placement"
+			(at 439.42 218.44 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "TDK"
+			(at 439.42 218.44 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "5%"
+			(at 439.42 218.44 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "1812"
+			(at 439.42 218.44 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "250"
 			(at 439.42 218.44 0)
 			(hide yes)
 			(effects
@@ -13156,7 +13617,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
+		(property "Footprint" "C07_Selected_PV:TI_DBV0006A"
 			(at 325.12 279.4 0)
 			(hide yes)
 			(show_name no)
@@ -13167,7 +13628,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "http://www.ti.com/lit/sg/scyt129e/scyt129e.pdf"
+		(property "Datasheet" "https://www.ti.com/lit/gpn/sn74lvc1g11#page=22"
 			(at 325.12 279.4 0)
 			(hide yes)
 			(show_name no)
@@ -13189,7 +13650,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PACKAGE_CANDIDATE; not fabrication qualified"
+		(property "FootprintStatus" "Existing C07 MPN; project-local land geometry checked against selected part source"
 			(at 325.12 279.4 0)
 			(hide yes)
 			(show_name no)
@@ -13233,7 +13694,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 engineering package envelope; nominal dimensions matched to existing MPN"
 			(at 325.12 279.4 0)
 			(hide yes)
 			(show_name no)
@@ -13333,7 +13794,7 @@
 				)
 			)
 		)
-		(property "Footprint" "C07_Planning:V20PW22_Ktab_A1_A2_UNQUALIFIED"
+		(property "Footprint" "C07_AssetReview:Vishay_V20PW22_SlimDPAK_TO-252AE_K12"
 			(at 139.7 30.48 0)
 			(hide yes)
 			(show_name no)
@@ -13366,7 +13827,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "Manufacturer land documented and measured, Vishay 87004 p5; K upper, lead 1 right and 2 left in component-side view"
 			(at 139.7 30.48 0)
 			(hide yes)
 			(show_name no)
@@ -13410,7 +13871,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "Aligned Vishay SlimDPAK STEP; terminal contact regions verified"
 			(at 139.7 30.48 0)
 			(hide yes)
 			(show_name no)
@@ -13454,7 +13915,7 @@
 				)
 			)
 		)
-		(property "SymbolMatchBasis" "Vishay 87004 p1: leads 1 and 2 are A; tab is K. Exact symbol pin identities; footprint not qualified."
+		(property "SymbolMatchBasis" "Vishay 87004 p1: leads 1 and 2 anodes, tab K cathode; bottom-view labels mapped to component side"
 			(at 139.7 30.48 0)
 			(hide yes)
 			(show_name no)
@@ -13525,7 +13986,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:C_TDK_C4532_H320"
 			(at 154.94 133.35 0)
 			(hide yes)
 			(show_name no)
@@ -13536,7 +13997,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C4532C0G2E104J320KN"
 			(at 154.94 133.35 0)
 			(hide yes)
 			(show_name no)
@@ -13558,7 +14019,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 154.94 133.35 0)
 			(hide yes)
 			(show_name no)
@@ -13591,7 +14052,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C4532C0G2E104J320KN"
 			(at 154.94 133.35 0)
 			(hide yes)
 			(show_name no)
@@ -13602,7 +14063,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 154.94 133.35 0)
 			(hide yes)
 			(show_name no)
@@ -13660,6 +14121,51 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "SourceVoltageRatingRequirement" "200 V (C07 MATLAB PV_CVIN source specification, 100 nF)"
+			(at 154.94 133.35 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "TDK"
+			(at 154.94 133.35 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "5%"
+			(at 154.94 133.35 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "1812"
+			(at 154.94 133.35 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "250"
+			(at 154.94 133.35 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "Transistor_FET:Q_NMOS_GDS")
@@ -13692,7 +14198,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:TO-263-3_TabPin2"
+		(property "Footprint" "C07_Reviewed_Power:TO-263-2"
 			(at 254 53.34 0)
 			(hide yes)
 			(show_name no)
@@ -13703,7 +14209,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.infineon.com/assets/row/public/documents/24/49/infineon-ipb048n15n5lf-datasheet-en.pdf#page=10"
 			(at 254 53.34 0)
 			(hide yes)
 			(show_name no)
@@ -13725,7 +14231,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PACKAGE_CANDIDATE; not fabrication qualified"
+		(property "FootprintStatus" "Existing C07 MPN; project-local land geometry checked against selected part source"
 			(at 254 53.34 0)
 			(hide yes)
 			(show_name no)
@@ -13769,7 +14275,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 engineering package envelope; nominal dimensions matched to existing MPN"
 			(at 254 53.34 0)
 			(hide yes)
 			(show_name no)
@@ -13860,7 +14366,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Vishay_TNPW0805"
 			(at 251.46 388.62 0)
 			(hide yes)
 			(show_name no)
@@ -13871,7 +14377,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.vishay.com/docs/28758/tnpw_e3.pdf"
 			(at 251.46 388.62 0)
 			(hide yes)
 			(show_name no)
@@ -13893,7 +14399,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 251.46 388.62 0)
 			(hide yes)
 			(show_name no)
@@ -13926,7 +14432,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "TNPW080510K0BEEA"
 			(at 251.46 388.62 0)
 			(hide yes)
 			(show_name no)
@@ -13937,7 +14443,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 251.46 388.62 0)
 			(hide yes)
 			(show_name no)
@@ -13995,6 +14501,51 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "Manufacturer" "Vishay"
+			(at 251.46 388.62 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "0.1%"
+			(at 251.46 388.62 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 251.46 388.62 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedPower_at70C_W" "0.26"
+			(at 251.46 388.62 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "150"
+			(at 251.46 388.62 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "Device:R")
@@ -14025,7 +14576,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Vishay_TNPW0805"
 			(at 251.46 347.98 0)
 			(hide yes)
 			(show_name no)
@@ -14036,7 +14587,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.vishay.com/docs/28758/tnpw_e3.pdf"
 			(at 251.46 347.98 0)
 			(hide yes)
 			(show_name no)
@@ -14058,7 +14609,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 251.46 347.98 0)
 			(hide yes)
 			(show_name no)
@@ -14091,7 +14642,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "TNPW080510K0BEEA"
 			(at 251.46 347.98 0)
 			(hide yes)
 			(show_name no)
@@ -14102,7 +14653,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 251.46 347.98 0)
 			(hide yes)
 			(show_name no)
@@ -14160,6 +14711,51 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "Manufacturer" "Vishay"
+			(at 251.46 347.98 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "0.1%"
+			(at 251.46 347.98 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 251.46 347.98 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedPower_at70C_W" "0.26"
+			(at 251.46 347.98 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "150"
+			(at 251.46 347.98 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "Device:R")
@@ -14190,7 +14786,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Panasonic_ERJ6E_2012"
 			(at 393.7 254 0)
 			(hide yes)
 			(show_name no)
@@ -14201,7 +14797,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://industrial.panasonic.com/ww/products/pt/general-purpose-chip-resistors/models/ERJ6ENF1003V"
 			(at 393.7 254 0)
 			(hide yes)
 			(show_name no)
@@ -14223,7 +14819,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 393.7 254 0)
 			(hide yes)
 			(show_name no)
@@ -14256,7 +14852,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "ERJ6ENF1003V"
 			(at 393.7 254 0)
 			(hide yes)
 			(show_name no)
@@ -14267,7 +14863,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 393.7 254 0)
 			(hide yes)
 			(show_name no)
@@ -14325,6 +14921,51 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "Manufacturer" "Panasonic"
+			(at 393.7 254 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "1%"
+			(at 393.7 254 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 393.7 254 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedPower_at70C_W" "0.125"
+			(at 393.7 254 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "150"
+			(at 393.7 254 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "Device:R")
@@ -14355,7 +14996,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Panasonic_ERJ6E_2012"
 			(at 289.56 254 0)
 			(hide yes)
 			(show_name no)
@@ -14366,7 +15007,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://industrial.panasonic.com/ww/products/pt/general-purpose-chip-resistors/models/ERJ6ENF1003V"
 			(at 289.56 254 0)
 			(hide yes)
 			(show_name no)
@@ -14388,7 +15029,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 289.56 254 0)
 			(hide yes)
 			(show_name no)
@@ -14421,7 +15062,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "ERJ6ENF1003V"
 			(at 289.56 254 0)
 			(hide yes)
 			(show_name no)
@@ -14432,7 +15073,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 289.56 254 0)
 			(hide yes)
 			(show_name no)
@@ -14490,6 +15131,51 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "Manufacturer" "Panasonic"
+			(at 289.56 254 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "1%"
+			(at 289.56 254 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 289.56 254 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedPower_at70C_W" "0.125"
+			(at 289.56 254 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "150"
+			(at 289.56 254 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "Device:R")
@@ -14520,7 +15206,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Panasonic_ERJ6E_2012"
 			(at 365.76 182.88 0)
 			(hide yes)
 			(show_name no)
@@ -14531,7 +15217,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://industrial.panasonic.com/ww/products/pt/general-purpose-chip-resistors/models/ERJ6GEYJ106V"
 			(at 365.76 182.88 0)
 			(hide yes)
 			(show_name no)
@@ -14553,7 +15239,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 365.76 182.88 0)
 			(hide yes)
 			(show_name no)
@@ -14586,7 +15272,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "ERJ6GEYJ106V"
 			(at 365.76 182.88 0)
 			(hide yes)
 			(show_name no)
@@ -14597,7 +15283,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 365.76 182.88 0)
 			(hide yes)
 			(show_name no)
@@ -14655,6 +15341,51 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "Manufacturer" "Panasonic"
+			(at 365.76 182.88 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "5%"
+			(at 365.76 182.88 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 365.76 182.88 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedPower_at70C_W" "0.125"
+			(at 365.76 182.88 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "150"
+			(at 365.76 182.88 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "Transistor_FET:Q_NMOS_GDS")
@@ -14687,7 +15418,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:TO-263-3_TabPin2"
+		(property "Footprint" "C07_Reviewed_Power:TO-263-2"
 			(at 381 48.26 0)
 			(hide yes)
 			(show_name no)
@@ -14698,7 +15429,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.infineon.com/assets/row/public/documents/24/49/infineon-ipb048n15n5lf-datasheet-en.pdf#page=10"
 			(at 381 48.26 0)
 			(hide yes)
 			(show_name no)
@@ -14720,7 +15451,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PACKAGE_CANDIDATE; not fabrication qualified"
+		(property "FootprintStatus" "Existing C07 MPN; project-local land geometry checked against selected part source"
 			(at 381 48.26 0)
 			(hide yes)
 			(show_name no)
@@ -14764,7 +15495,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 engineering package envelope; nominal dimensions matched to existing MPN"
 			(at 381 48.26 0)
 			(hide yes)
 			(show_name no)
@@ -14855,7 +15586,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Panasonic_ERJ6E_2012"
 			(at 167.64 220.98 0)
 			(hide yes)
 			(show_name no)
@@ -14866,7 +15597,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://industrial.panasonic.com/ww/products/pt/general-purpose-chip-resistors/models/ERJ6ENF1003V"
 			(at 167.64 220.98 0)
 			(hide yes)
 			(show_name no)
@@ -14888,7 +15619,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 167.64 220.98 0)
 			(hide yes)
 			(show_name no)
@@ -14921,7 +15652,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "ERJ6ENF1003V"
 			(at 167.64 220.98 0)
 			(hide yes)
 			(show_name no)
@@ -14932,7 +15663,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 167.64 220.98 0)
 			(hide yes)
 			(show_name no)
@@ -14990,6 +15721,51 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "Manufacturer" "Panasonic"
+			(at 167.64 220.98 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "1%"
+			(at 167.64 220.98 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 167.64 220.98 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedPower_at70C_W" "0.125"
+			(at 167.64 220.98 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "150"
+			(at 167.64 220.98 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "Readable:Kelvin_IP_KP_KM_IM")
@@ -15020,7 +15796,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Claude_R03R2:Bourns_CSS4J-4026_Kelvin"
+		(property "Footprint" "C07_Reviewed_Bourns:Bourns_CSS4J_4026R_1L00F_Kelvin"
 			(at 63.5 50.8 0)
 			(hide yes)
 			(show_name no)
@@ -15031,7 +15807,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.bourns.com/docs/product-datasheets/css4j-4026.pdf#page=2"
 			(at 63.5 50.8 0)
 			(hide yes)
 			(show_name no)
@@ -15053,7 +15829,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PACKAGE_CANDIDATE; not fabrication qualified"
+		(property "FootprintStatus" "Existing C07 MPN; project-local land geometry checked against selected part source"
 			(at 63.5 50.8 0)
 			(hide yes)
 			(show_name no)
@@ -15097,7 +15873,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 engineering package envelope; nominal dimensions matched to existing MPN"
 			(at 63.5 50.8 0)
 			(hide yes)
 			(show_name no)
@@ -15193,7 +15969,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:C_Murata_GRM32_H250"
 			(at 393.7 151.13 0)
 			(hide yes)
 			(show_name no)
@@ -15204,7 +15980,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://pim.murata.com/asset/pim4/ceramicCapacitorSMD/GRM32EC72A106KE05-01A-EN_PDF_CERAMICCAPACITORSMD"
 			(at 393.7 151.13 0)
 			(hide yes)
 			(show_name no)
@@ -15226,7 +16002,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 393.7 151.13 0)
 			(hide yes)
 			(show_name no)
@@ -15259,7 +16035,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM32EC72A106KE05L"
 			(at 393.7 151.13 0)
 			(hide yes)
 			(show_name no)
@@ -15270,7 +16046,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 393.7 151.13 0)
 			(hide yes)
 			(show_name no)
@@ -15328,6 +16104,42 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "Manufacturer" "Murata"
+			(at 393.7 151.13 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "10%"
+			(at 393.7 151.13 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "1210"
+			(at 393.7 151.13 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "100"
+			(at 393.7 151.13 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "Device:C")
@@ -15360,7 +16172,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:C_Murata_GRM21_H125"
 			(at 292.1 337.82 0)
 			(hide yes)
 			(show_name no)
@@ -15371,7 +16183,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://pim.murata.com/asset/pim4/ceramicCapacitorSMD/GRM21BR71H104KA01-01-EN_PDF_CERAMICCAPACITORSMD"
 			(at 292.1 337.82 0)
 			(hide yes)
 			(show_name no)
@@ -15393,7 +16205,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 292.1 337.82 0)
 			(hide yes)
 			(show_name no)
@@ -15426,7 +16238,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM21BR71H104KA01L"
 			(at 292.1 337.82 0)
 			(hide yes)
 			(show_name no)
@@ -15437,7 +16249,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 292.1 337.82 0)
 			(hide yes)
 			(show_name no)
@@ -15495,6 +16307,42 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "Manufacturer" "Murata"
+			(at 292.1 337.82 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "10%"
+			(at 292.1 337.82 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 292.1 337.82 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "50"
+			(at 292.1 337.82 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "Device:R")
@@ -15525,7 +16373,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Panasonic_ERJ6E_2012"
 			(at 130.81 228.6 0)
 			(hide yes)
 			(show_name no)
@@ -15536,7 +16384,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://industrial.panasonic.com/ww/products/pt/general-purpose-chip-resistors/models/ERJ6ENF2202V"
 			(at 130.81 228.6 0)
 			(hide yes)
 			(show_name no)
@@ -15558,7 +16406,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 130.81 228.6 0)
 			(hide yes)
 			(show_name no)
@@ -15591,7 +16439,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "ERJ6ENF2202V"
 			(at 130.81 228.6 0)
 			(hide yes)
 			(show_name no)
@@ -15602,7 +16450,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 130.81 228.6 0)
 			(hide yes)
 			(show_name no)
@@ -15660,6 +16508,51 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "Manufacturer" "Panasonic"
+			(at 130.81 228.6 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "1%"
+			(at 130.81 228.6 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 130.81 228.6 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedPower_at70C_W" "0.125"
+			(at 130.81 228.6 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "150"
+			(at 130.81 228.6 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "Device:R")
@@ -15691,7 +16584,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Panasonic_ERJ6E_2012"
 			(at 289.56 304.8 0)
 			(hide yes)
 			(show_name no)
@@ -15702,7 +16595,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://industrial.panasonic.com/ww/products/pt/general-purpose-chip-resistors/models/ERJ6ENF1003V"
 			(at 289.56 304.8 0)
 			(hide yes)
 			(show_name no)
@@ -15724,7 +16617,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 289.56 304.8 0)
 			(hide yes)
 			(show_name no)
@@ -15757,7 +16650,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "ERJ6ENF1003V"
 			(at 289.56 304.8 0)
 			(hide yes)
 			(show_name no)
@@ -15768,7 +16661,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 289.56 304.8 0)
 			(hide yes)
 			(show_name no)
@@ -15819,6 +16712,51 @@
 		)
 	
 		(property "PCBInitialPlacement" "Schematic anchor 1:1; user final placement"
+			(at 289.56 304.8 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "Panasonic"
+			(at 289.56 304.8 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "1%"
+			(at 289.56 304.8 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 289.56 304.8 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedPower_at70C_W" "0.125"
+			(at 289.56 304.8 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "150"
 			(at 289.56 304.8 0)
 			(hide yes)
 			(effects
@@ -16042,7 +16980,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:C_Murata_GRM21_H125"
 			(at 350.52 254 0)
 			(hide yes)
 			(show_name no)
@@ -16053,7 +16991,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://pim.murata.com/asset/pim4/ceramicCapacitorSMD/GRM21BR71H104KA01-01-EN_PDF_CERAMICCAPACITORSMD"
 			(at 350.52 254 0)
 			(hide yes)
 			(show_name no)
@@ -16075,7 +17013,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 350.52 254 0)
 			(hide yes)
 			(show_name no)
@@ -16108,7 +17046,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM21BR71H104KA01L"
 			(at 350.52 254 0)
 			(hide yes)
 			(show_name no)
@@ -16119,7 +17057,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 350.52 254 0)
 			(hide yes)
 			(show_name no)
@@ -16177,6 +17115,42 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "Manufacturer" "Murata"
+			(at 350.52 254 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "10%"
+			(at 350.52 254 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 350.52 254 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "50"
+			(at 350.52 254 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "Device:C")
@@ -16209,7 +17183,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:C_Murata_GRM21_H125"
 			(at 477.52 254 0)
 			(hide yes)
 			(show_name no)
@@ -16220,7 +17194,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://pim.murata.com/asset/pim4/ceramicCapacitorSMD/GRM21BR71H104KA01-01-EN_PDF_CERAMICCAPACITORSMD"
 			(at 477.52 254 0)
 			(hide yes)
 			(show_name no)
@@ -16242,7 +17216,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 477.52 254 0)
 			(hide yes)
 			(show_name no)
@@ -16275,7 +17249,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "GRM21BR71H104KA01L"
 			(at 477.52 254 0)
 			(hide yes)
 			(show_name no)
@@ -16286,7 +17260,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 477.52 254 0)
 			(hide yes)
 			(show_name no)
@@ -16344,6 +17318,42 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "Manufacturer" "Murata"
+			(at 477.52 254 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "10%"
+			(at 477.52 254 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 477.52 254 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "50"
+			(at 477.52 254 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "Device:R")
@@ -16375,7 +17385,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Panasonic_ERJ6E_2012"
 			(at 116.84 196.85 0)
 			(hide yes)
 			(show_name no)
@@ -16386,7 +17396,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://industrial.panasonic.com/ww/products/pt/general-purpose-chip-resistors/models/ERJ6ENF1002V"
 			(at 116.84 196.85 0)
 			(hide yes)
 			(show_name no)
@@ -16408,7 +17418,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 116.84 196.85 0)
 			(hide yes)
 			(show_name no)
@@ -16441,7 +17451,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "ERJ6ENF1002V"
 			(at 116.84 196.85 0)
 			(hide yes)
 			(show_name no)
@@ -16452,7 +17462,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 116.84 196.85 0)
 			(hide yes)
 			(show_name no)
@@ -16510,6 +17520,51 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "Manufacturer" "Panasonic"
+			(at 116.84 196.85 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "1%"
+			(at 116.84 196.85 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 116.84 196.85 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedPower_at70C_W" "0.125"
+			(at 116.84 196.85 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "150"
+			(at 116.84 196.85 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "Device:D_Zener")
@@ -16540,7 +17595,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Diode_SMD:D_SOD-123F"
+		(property "Footprint" "C07_Reviewed_Special:Nexperia_SOD123F"
 			(at 294.64 101.6 0)
 			(hide yes)
 			(show_name no)
@@ -16551,7 +17606,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://assets.nexperia.com/documents/package-information/SOD123F.pdf#page=3"
 			(at 294.64 101.6 0)
 			(hide yes)
 			(show_name no)
@@ -16573,7 +17628,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PACKAGE_CANDIDATE; not fabrication qualified"
+		(property "FootprintStatus" "Existing C07 MPN; project-local land geometry checked against selected part source"
 			(at 294.64 101.6 0)
 			(hide yes)
 			(show_name no)
@@ -16617,7 +17672,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 engineering package envelope; nominal dimensions matched to existing MPN"
 			(at 294.64 101.6 0)
 			(hide yes)
 			(show_name no)
@@ -16706,7 +17761,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_VPG_FRSM0805_Hmax064"
 			(at 137.16 313.69 0)
 			(hide yes)
 			(show_name no)
@@ -16717,7 +17772,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://vpgfoilresistors.com/product/1375/datasheet?eb7258f688b044639d7a8db2330512d3=1"
 			(at 137.16 313.69 0)
 			(hide yes)
 			(show_name no)
@@ -16739,7 +17794,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 137.16 313.69 0)
 			(hide yes)
 			(show_name no)
@@ -16772,7 +17827,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "Y40229K80000B9R"
 			(at 137.16 313.69 0)
 			(hide yes)
 			(show_name no)
@@ -16783,7 +17838,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 137.16 313.69 0)
 			(hide yes)
 			(show_name no)
@@ -16841,6 +17896,60 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "SourceToleranceRequirement" "0.1% (C07 source specification)"
+			(at 137.16 313.69 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "VPG Foil Resistors"
+			(at 137.16 313.69 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "0.1%"
+			(at 137.16 313.69 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 137.16 313.69 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedPower_at70C_W" "0.3"
+			(at 137.16 313.69 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "94"
+			(at 137.16 313.69 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "Device:R")
@@ -16871,7 +17980,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Vishay_TNPW0805"
 			(at 213.36 335.28 0)
 			(hide yes)
 			(show_name no)
@@ -16882,7 +17991,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.vishay.com/docs/28758/tnpw_e3.pdf"
 			(at 213.36 335.28 0)
 			(hide yes)
 			(show_name no)
@@ -16904,7 +18013,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 213.36 335.28 0)
 			(hide yes)
 			(show_name no)
@@ -16937,7 +18046,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "TNPW080531K2BEEA"
 			(at 213.36 335.28 0)
 			(hide yes)
 			(show_name no)
@@ -16948,7 +18057,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 213.36 335.28 0)
 			(hide yes)
 			(show_name no)
@@ -17006,6 +18115,51 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "Manufacturer" "Vishay"
+			(at 213.36 335.28 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "0.1%"
+			(at 213.36 335.28 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 213.36 335.28 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedPower_at70C_W" "0.26"
+			(at 213.36 335.28 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "150"
+			(at 213.36 335.28 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "Readable:TLV3201AIDBVR_clear_power_text_r03")
@@ -17036,7 +18190,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-5"
+		(property "Footprint" "C07_Selected_PV:TI_DBV0005A"
 			(at 190.5 279.4 0)
 			(hide yes)
 			(show_name no)
@@ -17047,7 +18201,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://www.ti.com/lit/ds/symlink/tlv3201.pdf"
+		(property "Datasheet" "https://www.ti.com/lit/gpn/tlv3201#page=35"
 			(at 190.5 279.4 0)
 			(hide yes)
 			(show_name no)
@@ -17069,7 +18223,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PACKAGE_CANDIDATE; not fabrication qualified"
+		(property "FootprintStatus" "Existing C07 MPN; project-local land geometry checked against selected part source"
 			(at 190.5 279.4 0)
 			(hide yes)
 			(show_name no)
@@ -17113,7 +18267,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 engineering package envelope; nominal dimensions matched to existing MPN"
 			(at 190.5 279.4 0)
 			(hide yes)
 			(show_name no)
@@ -17395,7 +18549,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Panasonic_ERJ6E_2012"
 			(at 185.42 133.35 0)
 			(hide yes)
 			(show_name no)
@@ -17406,7 +18560,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://industrial.panasonic.com/ww/products/pt/general-purpose-chip-resistors/models/ERJ6ENF3303V"
 			(at 185.42 133.35 0)
 			(hide yes)
 			(show_name no)
@@ -17428,7 +18582,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 185.42 133.35 0)
 			(hide yes)
 			(show_name no)
@@ -17461,7 +18615,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "ERJ6ENF3303V"
 			(at 185.42 133.35 0)
 			(hide yes)
 			(show_name no)
@@ -17472,7 +18626,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 185.42 133.35 0)
 			(hide yes)
 			(show_name no)
@@ -17530,6 +18684,51 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "Manufacturer" "Panasonic"
+			(at 185.42 133.35 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "1%"
+			(at 185.42 133.35 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 185.42 133.35 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedPower_at70C_W" "0.125"
+			(at 185.42 133.35 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "150"
+			(at 185.42 133.35 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "Device:C")
@@ -17562,7 +18761,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:C_TDK_C2012_H060"
 			(at 162.56 313.69 0)
 			(hide yes)
 			(show_name no)
@@ -17573,7 +18772,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012C0G1H103J060AA"
 			(at 162.56 313.69 0)
 			(hide yes)
 			(show_name no)
@@ -17595,7 +18794,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 162.56 313.69 0)
 			(hide yes)
 			(show_name no)
@@ -17628,7 +18827,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "C2012C0G1H103J060AA"
 			(at 162.56 313.69 0)
 			(hide yes)
 			(show_name no)
@@ -17639,7 +18838,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 162.56 313.69 0)
 			(hide yes)
 			(show_name no)
@@ -17697,6 +18896,42 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "Manufacturer" "TDK"
+			(at 162.56 313.69 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "5%"
+			(at 162.56 313.69 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 162.56 313.69 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "50"
+			(at 162.56 313.69 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "Device:R")
@@ -17728,7 +18963,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Panasonic_ERJ6E_2012"
 			(at 320.04 167.64 0)
 			(hide yes)
 			(show_name no)
@@ -17739,7 +18974,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://industrial.panasonic.com/ww/products/pt/general-purpose-chip-resistors/models/ERJ6ENF1003V"
 			(at 320.04 167.64 0)
 			(hide yes)
 			(show_name no)
@@ -17761,7 +18996,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 320.04 167.64 0)
 			(hide yes)
 			(show_name no)
@@ -17794,7 +19029,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "ERJ6ENF1003V"
 			(at 320.04 167.64 0)
 			(hide yes)
 			(show_name no)
@@ -17805,7 +19040,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 320.04 167.64 0)
 			(hide yes)
 			(show_name no)
@@ -17863,6 +19098,51 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "Manufacturer" "Panasonic"
+			(at 320.04 167.64 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "1%"
+			(at 320.04 167.64 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 320.04 167.64 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedPower_at70C_W" "0.125"
+			(at 320.04 167.64 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "150"
+			(at 320.04 167.64 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "ReviewFixed:V20PW22_M3I")
@@ -17893,7 +19173,7 @@
 				)
 			)
 		)
-		(property "Footprint" "C07_Planning:V20PW22_Ktab_A1_A2_UNQUALIFIED"
+		(property "Footprint" "C07_AssetReview:Vishay_V20PW22_SlimDPAK_TO-252AE_K12"
 			(at 330.2 73.66 0)
 			(hide yes)
 			(show_name no)
@@ -17926,7 +19206,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "Manufacturer land documented and measured, Vishay 87004 p5; K upper, lead 1 right and 2 left in component-side view"
 			(at 330.2 73.66 0)
 			(hide yes)
 			(show_name no)
@@ -17970,7 +19250,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "Aligned Vishay SlimDPAK STEP; terminal contact regions verified"
 			(at 330.2 73.66 0)
 			(hide yes)
 			(show_name no)
@@ -18014,7 +19294,7 @@
 				)
 			)
 		)
-		(property "SymbolMatchBasis" "Vishay 87004 p1: leads 1 and 2 are A; tab is K. Exact symbol pin identities; footprint not qualified."
+		(property "SymbolMatchBasis" "Vishay 87004 p1: leads 1 and 2 anodes, tab K cathode; bottom-view labels mapped to component side"
 			(at 330.2 73.66 0)
 			(hide yes)
 			(show_name no)
@@ -18083,7 +19363,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Vishay_CRCW2512_HP"
 			(at 416.56 205.74 0)
 			(hide yes)
 			(show_name no)
@@ -18094,7 +19374,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.vishay.com/docs/20115/crcwhp.pdf"
 			(at 416.56 205.74 0)
 			(hide yes)
 			(show_name no)
@@ -18116,7 +19396,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 416.56 205.74 0)
 			(hide yes)
 			(show_name no)
@@ -18149,7 +19429,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "CRCW251210R0FKEGHP"
 			(at 416.56 205.74 0)
 			(hide yes)
 			(show_name no)
@@ -18160,7 +19440,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 416.56 205.74 0)
 			(hide yes)
 			(show_name no)
@@ -18218,6 +19498,51 @@
 					(size 1.27 1.27)
 				)
 			)
+		)
+		(property "Manufacturer" "Vishay"
+			(at 416.56 205.74 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "1%"
+			(at 416.56 205.74 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "2512"
+			(at 416.56 205.74 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedPower_at70C_W" "1.5"
+			(at 416.56 205.74 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "500"
+			(at 416.56 205.74 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		))
 	(symbol
 		(lib_id "Device:R")
@@ -18249,7 +19574,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+		(property "Footprint" "C07_Selected_PV:R_Panasonic_ERA6A_2012"
 			(at 137.16 288.29 0)
 			(hide yes)
 			(show_name no)
@@ -18260,7 +19585,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://industrial.panasonic.com/ww/products/pt/high-precision-chip-resistors/models/ERA6AEB1022V"
 			(at 137.16 288.29 0)
 			(hide yes)
 			(show_name no)
@@ -18282,7 +19607,7 @@
 				)
 			)
 		)
-		(property "FootprintStatus" "PLANNING_PLACEHOLDER; not fabrication qualified"
+		(property "FootprintStatus" "C07 engineering selection; project-local land geometry per component selection record"
 			(at 137.16 288.29 0)
 			(hide yes)
 			(show_name no)
@@ -18315,7 +19640,7 @@
 				)
 			)
 		)
-		(property "MPN" ""
+		(property "MPN" "ERA6AEB1022V"
 			(at 137.16 288.29 0)
 			(hide yes)
 			(show_name no)
@@ -18326,7 +19651,7 @@
 				)
 			)
 		)
-		(property "Model3DStatus" "Availability recorded in evidence/asset_copy_plan.json; not qualified"
+		(property "Model3DStatus" "C07 project-local nominal package envelope; assembled envelope checked in STEP"
 			(at 137.16 288.29 0)
 			(hide yes)
 			(show_name no)
@@ -18377,6 +19702,60 @@
 		)
 	
 		(property "PCBInitialPlacement" "Schematic anchor 1:1; user final placement"
+			(at 137.16 288.29 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "SourceToleranceRequirement" "0.1% (C07 source specification)"
+			(at 137.16 288.29 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "Panasonic"
+			(at 137.16 288.29 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "ManufacturerTolerance" "0.1%"
+			(at 137.16 288.29 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PackageCase" "0805"
+			(at 137.16 288.29 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedPower_at70C_W" "0.125"
+			(at 137.16 288.29 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "RatedVoltage_V" "100"
 			(at 137.16 288.29 0)
 			(hide yes)
 			(effects
