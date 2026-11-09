@@ -12,7 +12,8 @@
 /* Per-channel physical-unit calibration: measured_nominal*gain+offset. */
 static const c07_real_t cal_gain[8]=C07_CAL_GAIN;
 static const c07_real_t cal_offset[8]=C07_CAL_OFFSET;
-static const uint8_t adc_order[8]={0,7,1,3,2,6,4,5};
+/* Finish slow monitoring first; keep the PV pair adjacent and IL last. */
+static const uint8_t adc_order[8]={4,5,6,2,0,7,1,3};
 static const unsigned output_pins[]={C07_PWM_H,C07_PWM_L,C07_REARM,C07_PV_RUN,C07_BAT_EN,C07_BIAS_EN};
 
 static void output_low(unsigned pin) {
@@ -75,6 +76,15 @@ int c07_board_init(c07_board *b) {
     b->inputs.error="NOT_SAMPLED"; b->inputs.sample.pv_pair_span_us=-1;
     return 0;
 }
+static const char *adc_physical(const c07_board *b,unsigned ch,c07_real_t *value) {
+    c07_real_t nominal=c07_adc_nominal(ch,b->raw[ch]);
+    if (!isfinite(cal_gain[ch])||cal_gain[ch]<=0||!isfinite(cal_offset[ch]))
+        return "CAL_INVALID";
+    /* Identity calibration needs no software floating-point multiply/add. */
+    *value=(cal_gain[ch]==1&&cal_offset[ch]==0)
+        ?nominal:nominal*cal_gain[ch]+cal_offset[ch];
+    return isfinite(*value)?NULL:"ADC_NONFINITE";
+}
 const c07_inputs *c07_board_read(c07_board *b) {
     c07_inputs *i=&b->inputs;
     i->sample.valid=false; i->error=NULL; i->completed_us=0;
@@ -94,6 +104,7 @@ const c07_inputs *c07_board_read(c07_board *b) {
     i->sample.applied_duty=i->sample.applied_pwm_valid
         ?(c07_real_t)b->last_plan.high_ticks/(c07_real_t)C07_PWM_TICKS:0;
     i->sample.applied_synchronous=i->sample.applied_pwm_valid&&b->last_plan.synchronous;
+    c07_real_t physical[8];
     for(unsigned n=0;n<8;n++) { i->adc_start_us[n]=UINT32_MAX; i->adc_end_us[n]=UINT32_MAX; }
     for(unsigned n=0;n<8;n++) {
         unsigned channel=adc_order[n];
@@ -110,23 +121,21 @@ const c07_inputs *c07_board_read(c07_board *b) {
         if ((channel==1||channel==3||channel==4||channel==5)&&b->raw[channel]<=8) {
             i->error="ADC_SENSOR_LOW"; break;
         }
+        /* Convert earlier channels before the control measurements. Defer
+         * Vpv conversion until Ipv has been read, preserving their pair span. */
+        if(channel==7)continue;
+        if(channel==1){
+            i->error=adc_physical(b,7,&physical[7]);
+            if(i->error)break;
+        }
+        i->error=adc_physical(b,channel,&physical[channel]);
+        if(i->error)break;
     }
     if (!i->error) {
-        c07_real_t physical[8];
-        for(unsigned ch=0;ch<8;ch++) {
-            c07_real_t value=c07_adc_nominal(ch,b->raw[ch]);
-            if (!isfinite(cal_gain[ch])||cal_gain[ch]<=0||!isfinite(cal_offset[ch])) {
-                i->error="CAL_INVALID"; break;
-            }
-            physical[ch]=value*cal_gain[ch]+cal_offset[ch];
-            if (!isfinite(physical[ch])) { i->error="ADC_NONFINITE"; break; }
-        }
-        if (!i->error) {
-            i->sample.vin=physical[0]; i->sample.ipv=physical[1];
-            i->sample.vout=physical[2]; i->sample.il=physical[3];
-            i->sample.tbat=physical[4]; i->sample.tsink=physical[5];
-            i->sample.vbat=physical[6]; i->sample.vpv=physical[7];
-        }
+        i->sample.vin=physical[0]; i->sample.ipv=physical[1];
+        i->sample.vout=physical[2]; i->sample.il=physical[3];
+        i->sample.tbat=physical[4]; i->sample.tsink=physical[5];
+        i->sample.vbat=physical[6]; i->sample.vpv=physical[7];
     }
     status(b,true);
     if(i->pwm_events||!i->bias_good||i->pv_fault||i->battery_fault||i->pv_stopped){
